@@ -5,23 +5,23 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_GameResult : UI_Base
+public class UI_GameResult : MonoBehaviour
 {
     public Button toLobbyButton;
     public Button viewStatsButton;
 
     private void Start() {
-        BindEvent(toLobbyButton, OnClickToLobbyButton);
-        BindEvent(viewStatsButton, OnClickViewStatsButton);
+        toLobbyButton.onClick.AddListener(() => OnClickToLobbyButton());
+        viewStatsButton.onClick.AddListener(() => OnClickViewStatsButton());
     }
 
-    
 
-    public void OnClickToLobbyButton() {
+
+    private void OnClickToLobbyButton() {
         Debug.Log("로비 버튼클릭");
     }
 
-    public void OnClickViewStatsButton() {
+    private void OnClickViewStatsButton() {
         Debug.Log("스탯 버튼클릭");
     }
 }

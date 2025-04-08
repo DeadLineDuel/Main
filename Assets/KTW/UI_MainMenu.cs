@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_MainMenu : UI_Base 
+public class UI_MainMenu : MonoBehaviour 
 {
     public Button startButton;
     public Button settingButton;
 
     private void Start() {
-        BindEvent(startButton, OnClickGameStartButton);
-        BindEvent(settingButton, OnClickSettingButton);
+        startButton.onClick.AddListener(() => OnClickGameStartButton());
+        settingButton.onClick.AddListener(() => OnClickSettingButton());
     }
 
 
 
-    public void OnClickGameStartButton() {
-        Debug.Log("로비 버튼클릭");
+    private void OnClickGameStartButton() {
+        Debug.Log("시작 버튼 클릭");
     }
 
-    public void OnClickSettingButton() {
-        Debug.Log("스탯 버튼클릭");
+    private void OnClickSettingButton() {
+        Debug.Log("세팅 버튼 클릭");
     }
 }
