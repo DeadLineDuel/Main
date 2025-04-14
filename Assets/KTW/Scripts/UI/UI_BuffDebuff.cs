@@ -8,24 +8,30 @@ using static UnityEngine.GraphicsBuffer;
 
 public class UI_BuffDebuff : MonoBehaviour
 {
-    [SerializeField] private int currentCP = 10; // TEST
     public TMP_Text cpText;
     public Button[] tabButtons; // Player Enemy Boss
 
     public ScrollRect[] scrollls;
     public int selectedTabIndex = 0;
 
-
     public Button applyButton;
-
+    [SerializeField] private int currentCP = 10; // TEST
     [SerializeField] private Color selectedTabColor = Color.red;
     [SerializeField] private Color tabColor = Color.white;
     [SerializeField] private Color selectedItemColor = Color.yellow;
     [SerializeField] private Color itemColor = Color.white;
     private BuffDebuffItem selectedItem;
+    
     public GameObject totemPrefab;
 
+    [Header("Buff Data")]
+    public TextAsset buffJson;
+    private BuffDatabase buffDatabase;
+    public GameObject buffItemPrefab;
+
     private void Start() {
+        LoadBuffData();
+
         for (int i = 0; i < tabButtons.Length; i++) {
             int index = i; // Value Capture
             tabButtons[i].onClick.AddListener(() => SelectTab(index));
@@ -35,6 +41,36 @@ public class UI_BuffDebuff : MonoBehaviour
         SetCPText(currentCP);
         SelectTab(selectedTabIndex);    // Initial Value -> 0
     }
+
+    private void LoadBuffData() {
+        if (buffJson == null) {
+            Debug.LogError("Buff JSON file does not assigned");
+            return;
+        }
+        buffDatabase = JsonUtility.FromJson<BuffDatabase>(buffJson.text);
+        for (int i = 0; i < 3; i++) {
+            Transform content = scrollls[i].content;
+            List<BuffData> buffs = i switch {
+                0 => buffDatabase.playerBuffs,
+                1 => buffDatabase.enemyBuffs,
+                2 => buffDatabase.bossBuffs,
+                _ => new List<BuffData>()
+            };
+            foreach (BuffData data in buffs) {
+                CreateBuffItem(data, content);
+            }
+        }
+    }
+
+    private void CreateBuffItem(BuffData data, Transform parent) {
+        GameObject itemObject = Instantiate(buffItemPrefab, parent);
+        BuffDebuffItem item = itemObject.GetComponent<BuffDebuffItem>();
+        
+        item.Init(data);
+
+        // 버튼 할당
+    }
+
 
     private void SelectTab(int index) {
         selectedTabIndex = index;

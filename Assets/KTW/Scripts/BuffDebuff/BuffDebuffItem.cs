@@ -33,10 +33,22 @@ public class BuffDebuffItem : MonoBehaviour
 
     private UI_BuffDebuff uiController;
 
-    private void Start() {
+    public void Init(BuffData data) {
+        buffName = data.name;
+        buffCost = data.cost;
+        target = (BuffTargetEnum)System.Enum.Parse(typeof(BuffTargetEnum), data.target);
+        type = (BuffTypeEnum)System.Enum.Parse(typeof(BuffTypeEnum), data.type);
+        value = data.value;
+        SetUIText();
+        SetButtonEvent();
+    }
+
+    private void SetUIText() {
         nameText.text = buffName;
         costText.text = buffCost.ToString();
+    }
 
+    private void SetButtonEvent() {
         gameObject.GetComponent<Button>().onClick.AddListener(OnClick);
         uiController = FindObjectOfType<UI_BuffDebuff>();
     }
