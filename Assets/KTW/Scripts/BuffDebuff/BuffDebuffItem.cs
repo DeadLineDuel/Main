@@ -21,7 +21,7 @@ public enum BuffTargetEnum {
 public class BuffDebuffItem : MonoBehaviour
 {
     [Header("Text")]
-    [SerializeField] private string buffName;
+    [SerializeField] public string buffName;
     [SerializeField] public int buffCost = 1;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text costText;

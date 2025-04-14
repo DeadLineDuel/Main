@@ -48,7 +48,7 @@ public class UI_BuffDebuff : MonoBehaviour
             return;
         }
         buffDatabase = JsonUtility.FromJson<BuffDatabase>(buffJson.text);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < scrollls.Length; i++) {
             Transform content = scrollls[i].content;
             List<BuffData> buffs = i switch {
                 0 => buffDatabase.playerBuffs,
@@ -67,8 +67,6 @@ public class UI_BuffDebuff : MonoBehaviour
         BuffDebuffItem item = itemObject.GetComponent<BuffDebuffItem>();
         
         item.Init(data);
-
-        // 버튼 할당
     }
 
 
@@ -119,9 +117,10 @@ public class UI_BuffDebuff : MonoBehaviour
         BuffTotem totem = newTotem.GetComponent<BuffTotem>();
 
         // 토템 설정
+        totem.buffName = selectedItem.buffName;
         totem.targetType = selectedItem.target;
-        totem.effectType = selectedItem.type;
-        totem.effectValue = selectedItem.value;
+        totem.buffType = selectedItem.type;
+        totem.buffValue = selectedItem.value;
     }
 
     public Vector3 GetTotemSpawnPosition() {
