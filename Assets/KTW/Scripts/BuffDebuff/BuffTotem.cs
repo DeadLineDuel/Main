@@ -1,31 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BuffTotem : MonoBehaviour
 {
+    [Header("Buff Data")]
     public string buffName;
     public BuffTargetEnum targetType;
     public BuffTypeEnum buffType;
     public float buffDuration = 3f;
     public float buffValue;
 
-    public int owner;   // TODO 네트워크 값에 따라 누구의 토템인지 넣고 그 사람만 공격할 수 있도록
+    [Header("Network")]
+    public int owner;   // TODO 네트워크 값에 따라 누구의 토템인지 넣고 그 사람만 공격할 수 있도록 해야할 듯
 
     private Object_Base target;
     private BuffDebuff appliedBuff;
 
     private void Start() {
-        StartCoroutine(ApplyBuffCoroutine());
+        StartCoroutine(BuffDurationRoutine());
     }
 
-    private IEnumerator ApplyBuffCoroutine() {
-        ApplyBuffToTarget(true);
+    private IEnumerator BuffDurationRoutine() {
+        ApplyBuffToTarget();
         yield return new WaitForSeconds(buffDuration);
         Destroy(gameObject);
     }
 
-    private void ApplyBuffToTarget(bool alive) {
+    private void ApplyBuffToTarget() {
         switch (targetType) {
             case BuffTargetEnum.Player:
                 target = FindPlayer();
@@ -40,19 +43,25 @@ public class BuffTotem : MonoBehaviour
                 break;
         }
 
-        if (target == null) return;
-
-        if (alive) {
-            BuffDebuff existBuff = target.GetComponent<BuffDebuff>();
-            if (existBuff == null || existBuff.buffName != buffName) {  // 동일 버프가 존재하지 않을 경우 버프 추가
-                appliedBuff = target.gameObject.AddComponent<BuffDebuff>();
-                appliedBuff.buffName = buffName;
-                appliedBuff.buffType = buffType;
-                appliedBuff.value = buffValue;
-
-            }
+        if (target == null) {
+            Debug.LogError($"BuffTotem | ({targetType}) target not found");
+            return;
         }
-        else {
+
+        bool isApplied = target.GetComponents<BuffDebuff>()
+            .Any(buff => buff.buffName == buffName);    // 동일 버프가 존재하는지 체크
+
+        // 해당 버프가 존재하지 않을 때 컴포넌트 추가
+        if (!isApplied) {
+            appliedBuff = target.gameObject.AddComponent<BuffDebuff>();
+            appliedBuff.buffName = buffName;
+            appliedBuff.buffType = buffType;
+            appliedBuff.value = buffValue;
+        }
+    }
+
+    private void RemoveBuff() {
+        if (appliedBuff != null) {
             Destroy(appliedBuff);
         }
     }
@@ -70,6 +79,6 @@ public class BuffTotem : MonoBehaviour
     }
 
     private void OnDestroy() {
-        ApplyBuffToTarget(false);
+        RemoveBuff();
     }
 }

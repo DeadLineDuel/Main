@@ -18,29 +18,32 @@ public enum BuffTargetEnum {
     Boss
 }
 
+[RequireComponent(typeof(Button))]
 public class BuffDebuffItem : MonoBehaviour
 {
     [Header("Text")]
-    [SerializeField] public string buffName;
-    [SerializeField] public int buffCost = 1;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text costText;
 
-    [Header("Effect")]
+    [Header("Buff Data")]
+    public string buffName;
+    public int buffCost = 1;
     public BuffTargetEnum target;
     public BuffTypeEnum type;
     public float value = 10;
 
     private UI_BuffDebuff uiController;
 
-    public void Init(BuffData data) {
+    public void Init(BuffData data, UI_BuffDebuff ui) {
         buffName = data.name;
         buffCost = data.cost;
         target = (BuffTargetEnum)System.Enum.Parse(typeof(BuffTargetEnum), data.target);
         type = (BuffTypeEnum)System.Enum.Parse(typeof(BuffTypeEnum), data.type);
         value = data.value;
+
+        uiController = ui;
+        gameObject.GetComponent<Button>().onClick.AddListener(OnClickBuffDebuffItem);
         SetUIText();
-        SetButtonEvent();
     }
 
     private void SetUIText() {
@@ -48,12 +51,7 @@ public class BuffDebuffItem : MonoBehaviour
         costText.text = buffCost.ToString();
     }
 
-    private void SetButtonEvent() {
-        gameObject.GetComponent<Button>().onClick.AddListener(OnClick);
-        uiController = FindObjectOfType<UI_BuffDebuff>();
-    }
-
-    public void OnClick() {
+    public void OnClickBuffDebuffItem() {
         uiController.SelectItem(this);        
     }
 }

@@ -11,12 +11,13 @@ public class Object_Base : MonoBehaviour
     public float defense = 5f;
     public float attackSpeed = 1f;
     public float moveSpeed = 5f;
+    public float coolTime = 1.0f;
 
     // 버프/디버프 적용
-    public void ApplyBuffDebuff(BuffTypeEnum effectType, float value) {
-        switch (effectType) {
+    public void ApplyBuffDebuff(BuffTypeEnum buffType, float value) {
+        switch (buffType) {
             case BuffTypeEnum.Attack:
-                attack += value;
+                attack = Mathf.Max(0, attack + value);  // 음수 방지    // 리롤 할거 생각하면 필요 없는 기능일지도..
                 Debug.Log($"플레이어 공격력 {value} 변경 → 현재: {attack}");
                 break;
 
@@ -26,16 +27,18 @@ public class Object_Base : MonoBehaviour
                 break;
 
             case BuffTypeEnum.AttackSpeed:
-                attackSpeed += value;
+                attackSpeed = Mathf.Max(0, attackSpeed + value);    // 음수 방지
                 Debug.Log($"플레이어 공격속도 {value} 변경 → 현재: {attackSpeed}");
                 break;
 
             case BuffTypeEnum.MoveSpeed:
-                moveSpeed += value;
+                moveSpeed = Mathf.Max(0, moveSpeed + value); // 음수 방지
                 Debug.Log($"플레이어 이동속도 {value} 변경 → 현재: {moveSpeed}");
                 break;
+
             case BuffTypeEnum.Cooltime:
-                // 쿨타임은 별개로 처리 (단순 스탯 처리 +- 계산 불가능)
+                coolTime = Mathf.Max(0, coolTime + value); // 음수 방지
+                Debug.Log($"플레이어 쿨타임 {value} 변경 → 현재: {coolTime}");
                 break;
         }
     }

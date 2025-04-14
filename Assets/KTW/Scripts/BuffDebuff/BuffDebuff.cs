@@ -12,11 +12,16 @@ public class BuffDebuff : MonoBehaviour
 
     private void Start() {
         target = GetComponent<Object_Base>();
-
+        if (target == null) {
+            Debug.LogError($"BuffDebuf | {name} has no Object_Base");
+            Destroy(this);
+            return;
+        }
         ApplyEffect(true);
     }
 
     private void ApplyEffect(bool apply) {
+        
         float value = apply ? this.value : -this.value;
 
         target.ApplyBuffDebuff(buffType, value);

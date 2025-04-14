@@ -8,30 +8,33 @@ using static UnityEngine.GraphicsBuffer;
 
 public class UI_BuffDebuff : MonoBehaviour
 {
+    [Header("UI Assign")]
     public TMP_Text cpText;
     public Button[] tabButtons; // Player Enemy Boss
-
     public ScrollRect[] scrollls;
-    public int selectedTabIndex = 0;
+    private int selectedTabIndex = 0;
 
     public Button applyButton;
+
+    [Header("Setting")]
     [SerializeField] private int currentCP = 10; // TEST
     [SerializeField] private Color selectedTabColor = Color.red;
     [SerializeField] private Color tabColor = Color.white;
     [SerializeField] private Color selectedItemColor = Color.yellow;
     [SerializeField] private Color itemColor = Color.white;
+    
     private BuffDebuffItem selectedItem;
     
-    public GameObject totemPrefab;
-
+    
     [Header("Buff Data")]
     public TextAsset buffJson;
     private BuffDatabase buffDatabase;
     public GameObject buffItemPrefab;
+    public GameObject totemPrefab;
 
     private void Start() {
-        LoadBuffData();
-
+        LoadBuffDataFromJson();
+        CreateScrollViewContent();
         for (int i = 0; i < tabButtons.Length; i++) {
             int index = i; // Value Capture
             tabButtons[i].onClick.AddListener(() => SelectTab(index));
@@ -42,12 +45,15 @@ public class UI_BuffDebuff : MonoBehaviour
         SelectTab(selectedTabIndex);    // Initial Value -> 0
     }
 
-    private void LoadBuffData() {
+    private void LoadBuffDataFromJson() {
         if (buffJson == null) {
-            Debug.LogError("Buff JSON file does not assigned");
+            Debug.LogError("UI_BuffDebuff | Buff JSON file does not assigned");
             return;
         }
         buffDatabase = JsonUtility.FromJson<BuffDatabase>(buffJson.text);
+    }
+
+    private void CreateScrollViewContent() {
         for (int i = 0; i < scrollls.Length; i++) {
             Transform content = scrollls[i].content;
             List<BuffData> buffs = i switch {
@@ -66,23 +72,19 @@ public class UI_BuffDebuff : MonoBehaviour
         GameObject itemObject = Instantiate(buffItemPrefab, parent);
         BuffDebuffItem item = itemObject.GetComponent<BuffDebuffItem>();
         
-        item.Init(data);
+        item.Init(data, this);
     }
 
 
     private void SelectTab(int index) {
         selectedTabIndex = index;
         DeselectItem();
-        DeselectTab();
-        scrollls[index].gameObject.SetActive(true);
-        tabButtons[index].GetComponent<Image>().color = selectedTabColor;
-    }
-
-    private void DeselectTab() {
         for (int i = 0; i < scrollls.Length; i++) {
             scrollls[i].gameObject.SetActive(false);
             tabButtons[i].GetComponent<Image>().color = tabColor;
         }
+        scrollls[index].gameObject.SetActive(true);
+        tabButtons[index].GetComponent<Image>().color = selectedTabColor;
     }
 
     public void SetCPText(int value) {
