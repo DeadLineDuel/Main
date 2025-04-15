@@ -5,16 +5,29 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_Lobby : MonoBehaviour {
-    public List<Button> characterButtons;
-    public Image selectedCharacterBorderImage;
-    [SerializeField] private int selectedCharacterIndex = -1;
-    private bool isMatchmaking = false;
+    [Header("UI Assign")]
+    [SerializeField] private List<Button> characterButtons;
+    [SerializeField] private Image selectedCharacterBorderImage;
+    [SerializeField] private Button matchmakingButton;
+    [SerializeField] private Button cancleMatchmakingButton;
+    [SerializeField] private TextMeshProUGUI matchingText;
 
-    public Button matchmakingButton;
-    public Button cancleMatchmakingButton;
-    public TextMeshProUGUI matchingTextObject;
+    [Header("Matchmaking")]
+    [SerializeField] private int selectedCharacterIndex = -1;
+    [SerializeField] private bool isMatchmaking = false;
+
+    [Header("Sound")]
+    [SerializeField] private AudioClip characterSelectSound;
+    [SerializeField] private AudioClip matchmakingSound;    // TODO 사운드 추가
+    private AudioSource audioSource;
 
     private void Start() {
+        InitalizedButtons();
+        selectedCharacterBorderImage.gameObject.SetActive(false);
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    private void InitalizedButtons() {
         matchmakingButton.onClick.AddListener(() => OnClickMatchmakingtButton());
         cancleMatchmakingButton.onClick.AddListener(() => OnClickCanclematchMakingtButton());
 
@@ -22,13 +35,12 @@ public class UI_Lobby : MonoBehaviour {
             int index = i; // Value Capture
             characterButtons[i].onClick.AddListener(() => OnCharacterSelected(index));
         }
-        selectedCharacterBorderImage.gameObject.SetActive(false);
     }
 
     private void UpdateMatchmakingUI(bool isMatching) {
         matchmakingButton.gameObject.SetActive(!isMatching);
         cancleMatchmakingButton.gameObject.SetActive(isMatching);
-        matchingTextObject.gameObject.SetActive(isMatching);
+        matchingText.gameObject.SetActive(isMatching);
     }
 
     private void OnClickMatchmakingtButton() {
@@ -37,6 +49,8 @@ public class UI_Lobby : MonoBehaviour {
         Debug.Log("매칭 버튼 클릭");
         UpdateMatchmakingUI(true);
         isMatchmaking = true;
+
+        // PlayMatchmakingSound(matchmakingSound);
         // TODO 매치메이킹
 
     }
@@ -55,7 +69,7 @@ public class UI_Lobby : MonoBehaviour {
 
         selectedCharacterIndex = index;
 
-        // Move Red Border
+        // 빨간 테두리 옮기기 (선택 효과)
         if (selectedCharacterBorderImage != null) {
             selectedCharacterBorderImage.gameObject.SetActive(true);
             Vector3 buttonPosition = characterButtons[index].GetComponent<RectTransform>().position;
@@ -66,5 +80,12 @@ public class UI_Lobby : MonoBehaviour {
     // 외부에서 값 가져갈 때?
     public int GetSelectedCharacter() {
         return selectedCharacterIndex;
+    }
+
+    private void PlayMatchmakingSound(AudioClip clip) {
+        if (audioSource == null) return;
+        if (clip == null) return;
+
+        audioSource.PlayOneShot(clip);
     }
 }
