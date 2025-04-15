@@ -11,6 +11,7 @@ public class UI_Lobby : MonoBehaviour {
     [SerializeField] private Button matchmakingButton;
     [SerializeField] private Button cancleMatchmakingButton;
     [SerializeField] private TextMeshProUGUI matchingText;
+    [SerializeField] private GameObject matchingSpinnerObject;
 
     [Header("Matchmaking")]
     [SerializeField] private int selectedCharacterIndex = -1;
@@ -23,6 +24,7 @@ public class UI_Lobby : MonoBehaviour {
 
     private void Start() {
         InitalizedButtons();
+        UpdateMatchmakingUI(false);
         selectedCharacterBorderImage.gameObject.SetActive(false);
         audioSource = GetComponent<AudioSource>();
     }
@@ -41,6 +43,7 @@ public class UI_Lobby : MonoBehaviour {
         matchmakingButton.gameObject.SetActive(!isMatching);
         cancleMatchmakingButton.gameObject.SetActive(isMatching);
         matchingText.gameObject.SetActive(isMatching);
+        matchingSpinnerObject.gameObject.SetActive(isMatching);
     }
 
     private void OnClickMatchmakingtButton() {
