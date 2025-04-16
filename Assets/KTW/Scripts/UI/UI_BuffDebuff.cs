@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
-using static UnityEngine.GraphicsBuffer;
 
 public class UI_BuffDebuff : MonoBehaviour
 {
@@ -27,14 +25,16 @@ public class UI_BuffDebuff : MonoBehaviour
     
     
     [Header("Buff Data")]
-    public TextAsset buffJson;
+    [SerializeField] private TextAsset buffJson;
     private BuffDatabase buffDatabase;
-    public GameObject buffItemPrefab;
-    public GameObject totemPrefab;
+    [SerializeField] private GameObject buffItemPrefab;
+    [SerializeField] private GameObject totemPrefab;
+
+    public List<BuffTotem> spawnedTotem = new List<BuffTotem>();
 
     private void Start() {
         LoadBuffDataFromJson();
-        CreateScrollViewContent();
+        CreateScrollViewContentUI();
         for (int i = 0; i < tabButtons.Length; i++) {
             int index = i; // Value Capture
             tabButtons[i].onClick.AddListener(() => SelectTab(index));
@@ -53,7 +53,7 @@ public class UI_BuffDebuff : MonoBehaviour
         buffDatabase = JsonUtility.FromJson<BuffDatabase>(buffJson.text);
     }
 
-    private void CreateScrollViewContent() {
+    private void CreateScrollViewContentUI() {
         for (int i = 0; i < scrollls.Length; i++) {
             Transform content = scrollls[i].content;
             List<BuffData> buffs = i switch {
@@ -63,12 +63,12 @@ public class UI_BuffDebuff : MonoBehaviour
                 _ => new List<BuffData>()
             };
             foreach (BuffData data in buffs) {
-                CreateBuffItem(data, content);
+                CreateBuffItemUI(data, content);
             }
         }
     }
 
-    private void CreateBuffItem(BuffData data, Transform parent) {
+    private void CreateBuffItemUI(BuffData data, Transform parent) {
         GameObject itemObject = Instantiate(buffItemPrefab, parent);
         BuffDebuffItem item = itemObject.GetComponent<BuffDebuffItem>();
         
@@ -107,11 +107,20 @@ public class UI_BuffDebuff : MonoBehaviour
     private void ClickApplyButton() {
         if (selectedItem == null) return;
         if (currentCP < selectedItem.buffCost) return;
+        if (CheckExistSameBuff()) {
+            DeselectItem();
+            Debug.Log("이 버프는 중복임!");
+            return;
+        }
 
         currentCP -= selectedItem.buffCost;
         SetCPText(currentCP);
         SummonTotem();
         DeselectItem();
+    }
+
+    private bool CheckExistSameBuff() {
+        return spawnedTotem.Any(totem => totem.buffName == selectedItem.buffName);
     }
 
     public void SummonTotem() {
@@ -123,6 +132,15 @@ public class UI_BuffDebuff : MonoBehaviour
         totem.targetType = selectedItem.target;
         totem.buffType = selectedItem.type;
         totem.buffValue = selectedItem.value;
+        
+        totem.uiBuffDebuff = this;
+        spawnedTotem.Add(totem);
+    }
+
+    public void RemoveTotem(BuffTotem totem) {
+        if (spawnedTotem.Contains(totem)) {
+            spawnedTotem.Remove(totem);
+        }
     }
 
     public Vector3 GetTotemSpawnPosition() {

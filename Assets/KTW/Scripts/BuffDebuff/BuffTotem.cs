@@ -9,7 +9,7 @@ public class BuffTotem : MonoBehaviour
     public string buffName;
     public BuffTargetEnum targetType;
     public BuffTypeEnum buffType;
-    public float buffDuration = 3f;
+    public float buffDuration = 10f;
     public float buffValue;
 
     [Header("Network")]
@@ -17,6 +17,8 @@ public class BuffTotem : MonoBehaviour
 
     private Object_Base target;
     private BuffDebuff appliedBuff;
+
+    public UI_BuffDebuff uiBuffDebuff;
 
     private void Start() {
         StartCoroutine(BuffDurationRoutine());
@@ -80,5 +82,6 @@ public class BuffTotem : MonoBehaviour
 
     private void OnDestroy() {
         RemoveBuff();
+        uiBuffDebuff.RemoveTotem(this);
     }
 }
