@@ -7,14 +7,24 @@ using UnityEngine.UI;
 public class UI_BuffDebuff : MonoBehaviour
 {
     [Header("UI Assign")]
-    public TMP_Text cpText;
-    public Button[] tabButtons; // Player Enemy Boss
-    public ScrollRect[] scrollls;
+    [SerializeField] private TMP_Text cpText;
+    [SerializeField] private Button[] tabButtons; // Player Enemy Boss
+    [SerializeField] private ScrollRect[] scrollls;
+    [SerializeField] private Button applyButton;
+    [SerializeField] private Button minimizeButton;
+    [SerializeField] private Button minimizeRestoreButton;
+    [SerializeField] private CanvasGroup minimizeCanvasGroup;
+    [SerializeField] private CanvasGroup minimizeRestoreCanvasGroup;
+    [SerializeField] private GameObject mainPanel;  // 최소화할 때 사라지게할 패널
+    [SerializeField] private RectTransform backgroundRect;
+
     private int selectedTabIndex = 0;
 
-    public Button applyButton;
-
     [Header("Setting")]
+    [SerializeField] private float minimizedAlpha = 0.3f;
+    [SerializeField] private float minimizedRestoreAlpha = 1.0f;
+    [SerializeField] private float minimizedHeight = 70.0f;
+    [SerializeField] private float minimizedRestoreHeight = 600.0f;
     [SerializeField] private int currentCP = 10; // TEST
     [SerializeField] private Color selectedTabColor = Color.red;
     [SerializeField] private Color tabColor = Color.white;
@@ -35,14 +45,22 @@ public class UI_BuffDebuff : MonoBehaviour
     private void Start() {
         LoadBuffDataFromJson();
         CreateScrollViewContentUI();
+        BindButtonEvent();
+        SetCPText(currentCP);
+        SelectTab(selectedTabIndex);    // Initial Value -> 0
+    }
+
+    private void BindButtonEvent() {
+        // Player Enemy Boss 탭
         for (int i = 0; i < tabButtons.Length; i++) {
             int index = i; // Value Capture
             tabButtons[i].onClick.AddListener(() => SelectTab(index));
         }
-        applyButton.onClick.AddListener(() => ClickApplyButton());
+        applyButton.onClick.AddListener(() => ClickApplyButton());  // 적용 버튼
 
-        SetCPText(currentCP);
-        SelectTab(selectedTabIndex);    // Initial Value -> 0
+        // 최소화
+        minimizeButton.onClick.AddListener(() => ClickMinimizeButton());
+        minimizeRestoreButton.onClick.AddListener(() => ClickMinimizeRestoreButton());
     }
 
     private void LoadBuffDataFromJson() {
@@ -146,5 +164,32 @@ public class UI_BuffDebuff : MonoBehaviour
     public Vector3 GetTotemSpawnPosition() {
         // TODO 토템 소환 위치 플레이어위치?
         return Vector3.zero;
+    }
+
+    private void ClickMinimizeButton() {
+        SetMainPanelView(false);
+        SetCanvasGroupState(minimizeCanvasGroup, false);
+        SetCanvasGroupState(minimizeRestoreCanvasGroup, true);
+        SetBackgroundHeight(minimizedHeight);
+    }
+
+    private void ClickMinimizeRestoreButton() {
+        SetMainPanelView(true);
+        SetCanvasGroupState(minimizeCanvasGroup, true);
+        SetCanvasGroupState(minimizeRestoreCanvasGroup, false);
+        SetBackgroundHeight(minimizedRestoreHeight);
+    }
+
+    private void SetMainPanelView(bool active) {
+        mainPanel.SetActive(active);
+    }
+
+    private void SetBackgroundHeight(float height) {
+        backgroundRect.sizeDelta = new Vector2(backgroundRect.sizeDelta.x, height);
+    }
+
+    private void SetCanvasGroupState(CanvasGroup canvasGroup, bool active) {
+        canvasGroup.alpha = active ? minimizedRestoreAlpha : minimizedAlpha;
+        canvasGroup.interactable = active;
     }
 }
