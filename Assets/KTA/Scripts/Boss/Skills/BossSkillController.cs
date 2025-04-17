@@ -8,9 +8,15 @@ namespace Boss.Skills
     {
         [SerializeField] private Animator animator;
         public bool IsSkillActive { get; private set; } = false;
-        
-        [SerializeField] private List<BossSkill> skills;
+
+        [SerializeField] private List<BossSkill> skills =  new List<BossSkill>();
+        [SerializeField] private List<BossSkill> skillsPrefab =  new List<BossSkill>();
         private BossSkill currentSkill;
+
+        private void Awake()
+        {
+            skills.Add(Instantiate(skillsPrefab[0]));
+        }
 
         private BossSkill SelectSkill()
         {
@@ -24,9 +30,10 @@ namespace Boss.Skills
             animator.SetTrigger(currentSkill.BossSkillHash); // Play Skill Animation
         }
 
-        private void OnSpawnEffect()
+        private void OnEffect()
         {
-            currentSkill.Perform();
+            print("OnEffect");
+            currentSkill.Perform(gameObject.transform.position);
         }
         
         private void OnAnimationEnd()
