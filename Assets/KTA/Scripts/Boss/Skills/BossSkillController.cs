@@ -16,6 +16,7 @@ namespace Boss.Skills
         private void Awake()
         {
             skills.Add(Instantiate(skillsPrefab[0]));
+            skills[0].transform.SetParent(transform);
         }
 
         private BossSkill SelectSkill()

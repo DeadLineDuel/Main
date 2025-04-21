@@ -7,6 +7,8 @@ namespace Boss.Skills
     {
         [field: SerializeField] public String BossSkillName { get; protected set; }
         [field: SerializeField] public SkillIndicator SkillIndicator { get; protected set; }
+        protected Collider[] Colliders = new Collider[2];
+        protected Vector3 TargetPosition;
         public int BossSkillHash { get; private set; }
 
         protected virtual void Awake()

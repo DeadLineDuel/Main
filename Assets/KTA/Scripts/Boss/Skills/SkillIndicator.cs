@@ -39,6 +39,7 @@ namespace Boss.Skills
 
         public void SetLocation(Vector3 location)
         {
+            location.y += 0.01f;
             gameObject.transform.position = location;
         }
         
