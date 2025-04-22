@@ -11,11 +11,13 @@ public class UI_CharacterSelect : MonoBehaviour {
     [SerializeField] private Button matchmakingButton;
     [SerializeField] private Button cancleMatchmakingButton;
     [SerializeField] private TextMeshProUGUI matchingText;
-    [SerializeField] private GameObject matchingSpinnerObject;
+    // [SerializeField] private GameObject matchingSpinnerObject;
 
     [Header("Matchmaking")]
     [SerializeField] private int selectedCharacterIndex = -1;
     [SerializeField] private bool isMatchmaking = false;
+    private float matchmakingElapsed = 0f;
+    private Coroutine matchmakingTimerCoroutine;
 
     [Header("Sound")]
     [SerializeField] private AudioClip characterSelectSound;
@@ -43,7 +45,7 @@ public class UI_CharacterSelect : MonoBehaviour {
         matchmakingButton.gameObject.SetActive(!isMatching);
         cancleMatchmakingButton.gameObject.SetActive(isMatching);
         matchingText.gameObject.SetActive(isMatching);
-        matchingSpinnerObject.gameObject.SetActive(isMatching);
+        // matchingSpinnerObject.gameObject.SetActive(isMatching);
     }
 
     private void OnClickMatchmakingtButton() {
@@ -52,6 +54,13 @@ public class UI_CharacterSelect : MonoBehaviour {
         Debug.Log("매칭 버튼 클릭");
         UpdateMatchmakingUI(true);
         isMatchmaking = true;
+
+        // 타이머
+        matchmakingElapsed = 0f;
+        if (matchmakingTimerCoroutine != null) {
+            StopCoroutine(matchmakingTimerCoroutine);
+        }
+        matchmakingTimerCoroutine = StartCoroutine(MatchmakingTimerRoutine());
 
         // PlayMatchmakingSound(matchmakingSound);
         // TODO 매치메이킹
@@ -90,5 +99,14 @@ public class UI_CharacterSelect : MonoBehaviour {
         if (clip == null) return;
 
         audioSource.PlayOneShot(clip);
+    }
+
+    private IEnumerator MatchmakingTimerRoutine() {
+        while (isMatchmaking) {
+            matchmakingElapsed += Time.deltaTime;
+            int seconds = Mathf.FloorToInt(matchmakingElapsed);
+            matchingText.text = $"Find Match... {seconds}s";
+            yield return null;
+        }
     }
 }
