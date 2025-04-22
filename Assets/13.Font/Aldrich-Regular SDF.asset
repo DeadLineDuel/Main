@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hashCode: -1208033089
   material: {fileID: 7503143391497007800}
-  materialHashCode: -580916673
+  materialHashCode: 1140736852
   m_Version: 1.1.0
   m_SourceFontFileGUID: 580d0a614f64c9c4c93d447403f34dcd
   m_SourceFontFile_EditorRef: {fileID: 0}
