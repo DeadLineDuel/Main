@@ -25,6 +25,8 @@ public class UI_BuffDebuff : MonoBehaviour
     [SerializeField] private float minimizedRestoreAlpha = 1.0f;
     [SerializeField] private float minimizedHeight = 70.0f;
     [SerializeField] private float minimizedRestoreHeight = 600.0f;
+    [SerializeField] private float minimizedBackgroundPosY = 0.0f;
+    [SerializeField] private float minimizedRestoreBackgroundPosY = 24.0f;
     [SerializeField] private int currentCP = 10; // TEST
     [SerializeField] private Color selectedTabColor = Color.red;
     [SerializeField] private Color tabColor = Color.white;
@@ -170,22 +172,24 @@ public class UI_BuffDebuff : MonoBehaviour
         SetMainPanelView(false);
         SetCanvasGroupState(minimizeCanvasGroup, false);
         SetCanvasGroupState(minimizeRestoreCanvasGroup, true);
-        SetBackgroundHeight(minimizedHeight);
+        SetBackgroundHeight(minimizedHeight, minimizedBackgroundPosY);
     }
 
     private void ClickMinimizeRestoreButton() {
         SetMainPanelView(true);
         SetCanvasGroupState(minimizeCanvasGroup, true);
         SetCanvasGroupState(minimizeRestoreCanvasGroup, false);
-        SetBackgroundHeight(minimizedRestoreHeight);
+        SetBackgroundHeight(minimizedRestoreHeight, minimizedRestoreBackgroundPosY);
     }
 
     private void SetMainPanelView(bool active) {
         mainPanel.SetActive(active);
     }
 
-    private void SetBackgroundHeight(float height) {
+    private void SetBackgroundHeight(float height, float posY) {
         backgroundRect.sizeDelta = new Vector2(backgroundRect.sizeDelta.x, height);
+        backgroundRect.anchoredPosition = new Vector2(backgroundRect.anchoredPosition.x, posY);
+        Debug.Log(posY);
     }
 
     private void SetCanvasGroupState(CanvasGroup canvasGroup, bool active) {
