@@ -22,25 +22,6 @@ public class UI_Boss : MonoBehaviour
         enemyNameText.text = "적 이름";
     }
 
-    private void Update() {
-        // FOR TEST
-        if (Input.GetKeyDown(KeyCode.A)) {
-            UpdatePlayerBossHP(1f);
-            UpdateEnemyBossHP(1f);
-        }
-
-        if (Input.GetKeyDown(KeyCode.S)) {
-            UpdatePlayerBossHP(0.5f);
-            UpdateEnemyBossHP(0.5f);
-        }
-
-        if (Input.GetKeyDown(KeyCode.D)) {
-            UpdatePlayerBossHP(0.1f);
-            UpdateEnemyBossHP(0.1f);
-        }
-
-    }
-
     /// <summary>
     /// 플레이어 보스 HP 업데이트
     /// </summary>
