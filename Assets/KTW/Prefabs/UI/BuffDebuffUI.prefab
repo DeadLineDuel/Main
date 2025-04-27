@@ -860,7 +860,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8619498765868410767}
   m_HandleRect: {fileID: 3964056546176845029}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1155,10 +1155,10 @@ MonoBehaviour:
   backgroundRect: {fileID: 5296258760527850935}
   minimizedAlpha: 0.7
   minimizedRestoreAlpha: 1
-  minimizedHeight: 120
+  minimizedHeight: 200
   minimizedRestoreHeight: 650
-  minimizedBackgroundPosY: 0
-  minimizedRestoreBackgroundPosY: 24
+  minimizedBackgroundPosY: 25
+  minimizedRestoreBackgroundPosY: 25
   currentCP: 1000
   selectedTabColor: {r: 0, g: 1, b: 0, a: 1}
   tabColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1167,7 +1167,7 @@ MonoBehaviour:
   buffJson: {fileID: 4900000, guid: 54e3a518b60d85b4180e69fa0d981d91, type: 3}
   buffItemPrefab: {fileID: 2589494437118715774, guid: 0a87bc115ba524044b6452266a315708,
     type: 3}
-  totemPrefab: {fileID: 6277819890681326080, guid: ba2a70fe02a978749b785d7655f8369d,
+  totemPrefab: {fileID: 8859369014219497724, guid: 7af4c62b8ee1af748982ac35dd2a4185,
     type: 3}
   spawnedTotem: []
 --- !u!1 &2724412398816968981
