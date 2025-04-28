@@ -28,12 +28,27 @@ public class BuffTotem : Object_Base
     public UI_BuffDebuff uiBuffDebuff;
 
     private void Start() {
+        InitializeHP();
         StartCoroutine(BuffDurationRoutine());
     }
 
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.A)) {
-            UpdateHP(10);
+    private void InitializeHP() {
+        currentHP = maxHP;
+        hpSlider.value = 1f;
+    }
+
+    /// <summary>
+    /// 토템에 데미지 적용 후 HP Bar에 반영. 잔여 HP 검사하고 파괴
+    /// </summary>
+    /// <param name="damage">주는 데미지</param>
+    public override void UpdateHP(float damage) {
+        base.UpdateHP(damage);
+
+        currentHP = Mathf.Max(currentHP - damage, 0);
+        hpSlider.DOValue(currentHP / maxHP, UIHPBarAnimationDuration).SetEase(Ease.OutQuad);
+
+        if (currentHP <= 0) {
+            Destroy(gameObject);
         }
     }
 
@@ -44,19 +59,7 @@ public class BuffTotem : Object_Base
     }
 
     private void ApplyBuffToTarget() {
-        switch (targetType) {
-            case BuffTargetEnum.Player:
-                target = FindPlayer();
-                break;
-
-            case BuffTargetEnum.Enemy:
-                target = FindEnemy();
-                break;
-
-            case BuffTargetEnum.Boss:
-                target = FindBoss();
-                break;
-        }
+        target = FindTarget();
 
         if (target == null) {
             Debug.LogError($"BuffTotem | ({targetType}) target not found");
@@ -73,6 +76,15 @@ public class BuffTotem : Object_Base
             appliedBuff.buffType = buffType;
             appliedBuff.value = buffValue;
         }
+    }
+
+    private Object_Base FindTarget() {
+        return targetType switch {
+            BuffTargetEnum.Player => FindPlayer(),
+            BuffTargetEnum.Enemy => FindEnemy(),
+            BuffTargetEnum.Boss => FindBoss(),
+            _ => null
+        };
     }
 
     private void RemoveBuff() {
@@ -96,20 +108,5 @@ public class BuffTotem : Object_Base
     private void OnDestroy() {
         RemoveBuff();
         uiBuffDebuff.RemoveTotem(this);
-    }
-
-    /// <summary>
-    /// 토템에 데미지 적용 후 HP Bar에 반영. 잔여 HP 검사하고 파괴
-    /// </summary>
-    /// <param name="damage">주는 데미지</param>
-    public override void UpdateHP(float damage) {
-        base.UpdateHP(damage);
-
-        currentHP = Mathf.Max(currentHP - damage, 0);
-        hpSlider.DOValue(currentHP / maxHP, UIHPBarAnimationDuration).SetEase(Ease.OutQuad);
-
-        if (currentHP <= 0) {
-            Destroy(gameObject);
-        }
     }
 }
