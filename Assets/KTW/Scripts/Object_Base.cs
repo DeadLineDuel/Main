@@ -42,4 +42,8 @@ public class Object_Base : MonoBehaviour
                 break;
         }
     }
+
+    public virtual void UpdateHP(float damage) {
+
+    }
 }

@@ -1,9 +1,11 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class BuffTotem : MonoBehaviour
+public class BuffTotem : Object_Base
 {
     [Header("Buff Data")]
     public string buffName;
@@ -15,13 +17,24 @@ public class BuffTotem : MonoBehaviour
     [Header("Network")]
     public int owner;   // TODO 네트워크 값에 따라 누구의 토템인지 넣고 그 사람만 공격할 수 있도록 해야할 듯
 
+    [Header("HP")]
+    [SerializeField] private Slider hpSlider;
+    [SerializeField] private float maxHP = 100.0f;
+    [SerializeField] private float currentHP = 100.0f;
+    private const float UIHPBarAnimationDuration = 0.3f;
+
     private Object_Base target;
     private BuffDebuff appliedBuff;
-
     public UI_BuffDebuff uiBuffDebuff;
 
     private void Start() {
         StartCoroutine(BuffDurationRoutine());
+    }
+
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.A)) {
+            UpdateHP(10);
+        }
     }
 
     private IEnumerator BuffDurationRoutine() {
@@ -83,5 +96,20 @@ public class BuffTotem : MonoBehaviour
     private void OnDestroy() {
         RemoveBuff();
         uiBuffDebuff.RemoveTotem(this);
+    }
+
+    /// <summary>
+    /// 토템에 데미지 적용 후 HP Bar에 반영. 잔여 HP 검사하고 파괴
+    /// </summary>
+    /// <param name="damage">주는 데미지</param>
+    public override void UpdateHP(float damage) {
+        base.UpdateHP(damage);
+
+        currentHP = Mathf.Max(currentHP - damage, 0);
+        hpSlider.DOValue(currentHP / maxHP, UIHPBarAnimationDuration).SetEase(Ease.OutQuad);
+
+        if (currentHP <= 0) {
+            Destroy(gameObject);
+        }
     }
 }
