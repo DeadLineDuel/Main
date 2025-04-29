@@ -10,6 +10,7 @@ public class UI_CharacterSelect : MonoBehaviour {
     [SerializeField] private Image selectedCharacterBorderImage;
     [SerializeField] private Button matchmakingButton;
     [SerializeField] private Button cancleMatchmakingButton;
+    [SerializeField] private Button backToMainButton;
     [SerializeField] private TextMeshProUGUI matchingText;
     // [SerializeField] private GameObject matchingSpinnerObject;
 
@@ -25,20 +26,29 @@ public class UI_CharacterSelect : MonoBehaviour {
     private AudioSource audioSource;
 
     private void Start() {
-        InitalizedButtons();
+        InitalizedButtonsAndImages();
+        InitState();
         UpdateMatchmakingUI(false);
-        selectedCharacterBorderImage.gameObject.SetActive(false);
-        audioSource = GetComponent<AudioSource>();
+        // audioSource = GetComponent<AudioSource>();
     }
 
-    private void InitalizedButtons() {
+    private void InitalizedButtonsAndImages() {
         matchmakingButton.onClick.AddListener(() => OnClickMatchmakingtButton());
         cancleMatchmakingButton.onClick.AddListener(() => OnClickCanclematchMakingtButton());
+        backToMainButton.onClick.AddListener(() => OnClickBackToMainButton());
 
         for (int i = 0; i < characterButtons.Count; i++) {
             int index = i; // Value Capture
-            characterButtons[i].onClick.AddListener(() => OnCharacterSelected(index));
+            characterButtons[index].onClick.AddListener(() => OnCharacterSelected(index));
+            characterButtons[index].GetComponent<Image>().sprite = GameMainManager.Instance.GetCharacterPortraitImage(0);
+            // TODO 캐릭터 포트레잇 전부 0으로 되어있음
         }
+    }
+
+    public void InitState() {
+        selectedCharacterIndex = -1;
+        selectedCharacterBorderImage.gameObject.SetActive(false);
+        matchmakingButton.interactable = false;
     }
 
     private void UpdateMatchmakingUI(bool isMatching) {
@@ -49,9 +59,9 @@ public class UI_CharacterSelect : MonoBehaviour {
     }
 
     private void OnClickMatchmakingtButton() {
+        Debug.Log("Ui_CharacterSelect | OnClickMatchmakingtButton");
         if (selectedCharacterIndex == -1) return;
 
-        Debug.Log("매칭 버튼 클릭");
         UpdateMatchmakingUI(true);
         isMatchmaking = true;
 
@@ -63,7 +73,7 @@ public class UI_CharacterSelect : MonoBehaviour {
         matchmakingTimerCoroutine = StartCoroutine(MatchmakingTimerRoutine());
 
         // PlayMatchmakingSound(matchmakingSound);
-        // TODO 매치메이킹
+        GameMainManager.Instance.OnStartMatchmakingClicked();
 
     }
 
@@ -72,6 +82,12 @@ public class UI_CharacterSelect : MonoBehaviour {
         UpdateMatchmakingUI(false);
         isMatchmaking = false;
         // TODO 매칭 취소
+    }
+
+    private void OnClickBackToMainButton() {
+        Debug.Log("Ui_CharacterSelect | OnClickBackToMainButton");
+        GameMainManager.Instance.OnBackToMainClicked(); // 다른 UI 접근은 매니저에서 처리
+        matchmakingButton.interactable = false;
     }
 
     private void OnCharacterSelected(int index) {
@@ -87,6 +103,9 @@ public class UI_CharacterSelect : MonoBehaviour {
             Vector3 buttonPosition = characterButtons[index].GetComponent<RectTransform>().position;
             selectedCharacterBorderImage.rectTransform.position = buttonPosition;
         }
+
+        matchmakingButton.interactable = true;
+        GameMainManager.Instance.SetSelectCharacterIndex(index);
     }
 
     // 외부에서 값 가져갈 때?
