@@ -18,11 +18,6 @@ public class UI_GameResult : MonoBehaviour {
     private void Start() {
         toLobbyButton.onClick.AddListener(() => OnClickToLobbyButton());
         viewStatsButton.onClick.AddListener(() => OnClickViewStatsButton());
-
-        // TODO TEST
-        UpdateResultInfoFromServer("test", "test2",
-            "player1ID", 30, 30, 30,
-            "2dddd", 50, 50, 100);
     }
 
     private void OnClickToLobbyButton() {
