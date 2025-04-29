@@ -806,7 +806,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7601746083265438103
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1371,7 +1371,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5316952239281293057
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2180,6 +2180,8 @@ MonoBehaviour:
   viewStatsButton: {fileID: 5327444377189957235}
   winTextObject: {fileID: 2054019797670713428}
   loseTextObject: {fileID: 4133521527747125885}
+  playerInfoChunk: {fileID: 4682584917609933646}
+  enemyInfoChunk: {fileID: 298501371611180706}
 --- !u!1 &6376708853675745765
 GameObject:
   m_ObjectHideFlags: 0
