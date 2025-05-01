@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UI_PlayerUI : MonoBehaviour
@@ -18,7 +19,11 @@ public class UI_PlayerUI : MonoBehaviour
     [SerializeField] private Image[] skillButtonImages;
     [SerializeField] private Button healItemButton;
     [SerializeField] private TextMeshProUGUI itemAmountText;
-    
+
+
+    [SerializeField] private GameObject descriptionPanel;
+    [SerializeField] private TextMeshProUGUI descriptionNameText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
 
     private Coroutine[] cooldownCoroutines = new Coroutine[4];
     private int coolTimeReduction = 0;
@@ -28,6 +33,7 @@ public class UI_PlayerUI : MonoBehaviour
 
     private void Start() {
         InitializedButton();
+        InitializedMouseOverOutEvent();
 
         // TODO TEST
         UpdateStatTexts(100, 100, 1, -2);
@@ -43,6 +49,30 @@ public class UI_PlayerUI : MonoBehaviour
         skillButton[1].onClick.AddListener(() => OnClickWButton());
         skillButton[2].onClick.AddListener(() => OnClickEButton());
         skillButton[3].onClick.AddListener(() => OnClickRButton());
+    }
+
+    private void InitializedMouseOverOutEvent() {
+        // QWER 버튼에 마우스 오버 / 아웃 이벤트 추가
+        for (int i = 0; i < skillButton.Length; i++) {
+            int idx = i; // 클로저 캡처
+            EventTrigger trigger = skillButton[i].gameObject.GetComponent<EventTrigger>();
+            if (trigger == null)
+                trigger = skillButton[i].gameObject.AddComponent<EventTrigger>();
+
+            // PointerEnter
+            EventTrigger.Entry entryEnter = new EventTrigger.Entry();
+            entryEnter.eventID = EventTriggerType.PointerEnter;
+            entryEnter.callback.AddListener((data) => { ShowSkillDescription(idx); });
+            trigger.triggers.Add(entryEnter);
+
+            // PointerExit
+            EventTrigger.Entry entryExit = new EventTrigger.Entry();
+            entryExit.eventID = EventTriggerType.PointerExit;
+            entryExit.callback.AddListener((data) => { HideSkillDescription(); });
+            trigger.triggers.Add(entryExit);
+        }
+
+        descriptionPanel.SetActive(false);
     }
 
     private void Update() {
@@ -168,5 +198,18 @@ public class UI_PlayerUI : MonoBehaviour
         targetImage.color = originalColor;
 
         cooldownCoroutines[skillIndex] = null;
+    }
+
+    private void ShowSkillDescription(int idx) {
+        if (descriptionPanel == null || descriptionNameText == null || descriptionText == null) return;
+
+        descriptionPanel.SetActive(true);
+        descriptionNameText.text = SkillTextTemp.skillNames[idx];
+        descriptionText.text = SkillTextTemp.skillDescriptions[idx];
+    }
+
+    private void HideSkillDescription() {
+        if (descriptionPanel != null)
+            descriptionPanel.SetActive(false);
     }
 }
