@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class GameResultManager : MonoBehaviour
 {
+    private static GameResultManager _instance;
+    public static GameResultManager Instance => _instance;
+
     [Header("UI Assign")]
     [SerializeField] private UI_GameResult _uiGameResult;
 
@@ -20,12 +24,21 @@ public class GameResultManager : MonoBehaviour
     [SerializeField] private string _player2DeathsKey = "Player2Deaths";
 
     private string _localPlayerId; // 현재 클라이언트의 플레이어 ID 
-    
-    private void Start() {
+
+    private void Awake() {
+        // 싱글톤 패턴 구현
+        if (_instance == null) {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else {
+            Destroy(gameObject);
+            return;
+        }
+
         InitializePlayerIdentity();
         // TODO 데이터 로드
         // LoadAndDisplayResults();
-
         _uiGameResult.UpdateResultInfoFromServer(
             "test", "test2",
             "player1ID", 30, 30, 30,
@@ -35,7 +48,7 @@ public class GameResultManager : MonoBehaviour
 
     private void InitializePlayerIdentity() {
         // TODO 이건 다른 방식으로 가져와야
-        _localPlayerId = PlayerPrefs.GetString("LocalPlayerId", "Player"); // 기본값 1
+        _localPlayerId = PlayerPrefs.GetString("LocalPlayerId", "Player");
     }
 
     private void LoadAndDisplayResults() {
