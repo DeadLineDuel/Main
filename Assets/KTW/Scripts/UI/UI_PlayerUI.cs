@@ -30,10 +30,16 @@ public class UI_PlayerUI : MonoBehaviour
 
     private const float UIHPBarAnimationDuration = 0.3f;
 
+    [Header("Skill Data")]
+    [SerializeField] public string characterName = "Cosmo"; // 현재 캐릭터는 Cosmo밖에 없음
+
+    [SerializeField] private CharacterSkillData skillData;
 
     private void Start() {
         InitializedButton();
         InitializedMouseOverOutEvent();
+
+        skillData = SkillDataLoader.Instance.LoadSkillData(characterName);
 
         // TODO TEST
         UpdateStatTexts(100, 100, 1, -2);
@@ -204,8 +210,8 @@ public class UI_PlayerUI : MonoBehaviour
         if (descriptionPanel == null || descriptionNameText == null || descriptionText == null) return;
 
         descriptionPanel.SetActive(true);
-        descriptionNameText.text = SkillTextTemp.skillNames[idx];
-        descriptionText.text = SkillTextTemp.skillDescriptions[idx];
+        descriptionNameText.text = skillData.skillNames[idx];
+        descriptionText.text = skillData.skillDescriptions[idx];
     }
 
     private void HideSkillDescription() {
