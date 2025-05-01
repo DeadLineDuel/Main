@@ -20,6 +20,7 @@ public class TotemManager : MonoBehaviour
     [SerializeField] private List<int> player2AvailableSpawnPoints = new List<int>();
     [SerializeField] private Transform totemsParent;
 
+    [SerializeField] private GameObject[] vbxPrefab; // 이펙트
 
     private void Awake() {
         // 싱글톤 패턴 구현
@@ -84,6 +85,11 @@ public class TotemManager : MonoBehaviour
         totem.buffType = item.type;
         totem.buffValue = item.value;
         totem.spawnIndex = spawnIndex;
+
+        GameObject vbxObj = Instantiate(
+            vbxPrefab[0],
+            totem.transform // 부모를 토템으로 지정
+        );
 
         spawnedTotems.Add(totem);
     }
