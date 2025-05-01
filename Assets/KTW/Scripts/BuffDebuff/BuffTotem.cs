@@ -11,7 +11,7 @@ public class BuffTotem : Object_Base
     public string buffName;
     public BuffTargetEnum targetType;
     public BuffTypeEnum buffType;
-    public float buffDuration = 10f;
+    public float buffDuration = 30f;
     public float buffValue;
 
     [Header("Network")]
@@ -23,9 +23,12 @@ public class BuffTotem : Object_Base
     [SerializeField] private float currentHP = 100.0f;
     private const float UIHPBarAnimationDuration = 0.3f;
 
+    [Header("Spawn")]
+    public int spawnIndex;
+
+
     private Object_Base target;
     private BuffDebuff appliedBuff;
-    public UI_BuffDebuff uiBuffDebuff;
 
     private void Start() {
         InitializeHP();
@@ -107,6 +110,6 @@ public class BuffTotem : Object_Base
 
     private void OnDestroy() {
         RemoveBuff();
-        uiBuffDebuff.RemoveTotem(this);
+        TotemManager.Instance.RemoveTotem(this);
     }
 }

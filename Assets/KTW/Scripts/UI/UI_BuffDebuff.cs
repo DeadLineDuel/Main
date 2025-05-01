@@ -44,12 +44,15 @@ public class UI_BuffDebuff : MonoBehaviour
 
     public List<BuffTotem> spawnedTotem = new List<BuffTotem>();
 
+
     private void Start() {
         LoadBuffDataFromJson();
         CreateScrollViewContentUI();
         BindButtonEvent();
-        SetCPText(currentCP);
+
         SelectTab(selectedTabIndex);    // Initial Value -> 0
+
+        AddCP(1000); // TODO TEST
     }
 
     private void BindButtonEvent() {
@@ -107,7 +110,16 @@ public class UI_BuffDebuff : MonoBehaviour
         tabButtons[index].GetComponent<Image>().color = selectedTabColor;
     }
 
-    public void SetCPText(int value) {
+    /// <summary>
+    /// 외부에서 입력받아 CP를 증감
+    /// </summary>
+    /// <param name="value"></param>
+    public void AddCP(int value) {
+        currentCP += value;
+        SetCPText(currentCP);
+    }
+
+    private void SetCPText(int value) {
         cpText.text = value.ToString();
     }
 
@@ -144,28 +156,7 @@ public class UI_BuffDebuff : MonoBehaviour
     }
 
     public void SummonTotem() {
-        GameObject newTotem = Instantiate(totemPrefab, GetTotemSpawnPosition(), Quaternion.identity);
-        BuffTotem totem = newTotem.GetComponent<BuffTotem>();
-
-        // 토템 설정
-        totem.buffName = selectedItem.buffName;
-        totem.targetType = selectedItem.target;
-        totem.buffType = selectedItem.type;
-        totem.buffValue = selectedItem.value;
-        
-        totem.uiBuffDebuff = this;
-        spawnedTotem.Add(totem);
-    }
-
-    public void RemoveTotem(BuffTotem totem) {
-        if (spawnedTotem.Contains(totem)) {
-            spawnedTotem.Remove(totem);
-        }
-    }
-
-    public Vector3 GetTotemSpawnPosition() {
-        // TODO 토템 소환 위치 플레이어위치?
-        return Vector3.zero;
+        TotemManager.Instance.SummonTotem(selectedItem);
     }
 
     private void ClickMinimizeButton() {

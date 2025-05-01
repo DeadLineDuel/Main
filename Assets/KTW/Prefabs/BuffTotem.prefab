@@ -230,13 +230,13 @@ MonoBehaviour:
   buffName: 
   targetType: 0
   buffType: 0
-  buffDuration: 10
+  buffDuration: 5
   buffValue: 0
   owner: 0
   hpSlider: {fileID: 1317724553664800389}
   maxHP: 100
   currentHP: 100
-  uiBuffDebuff: {fileID: 0}
+  spawnIndex: 0
 --- !u!1001 &4308102722137910789
 PrefabInstance:
   m_ObjectHideFlags: 0
