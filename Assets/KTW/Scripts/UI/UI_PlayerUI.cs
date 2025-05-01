@@ -21,7 +21,7 @@ public class UI_PlayerUI : MonoBehaviour
     
 
     private Coroutine[] cooldownCoroutines = new Coroutine[4];
-    private float coolTimeMultiplier = 1.0f;
+    private int coolTimeReduction = 0;
 
     private const float UIHPBarAnimationDuration = 0.3f;
 
@@ -30,7 +30,7 @@ public class UI_PlayerUI : MonoBehaviour
         InitializedButton();
 
         // TODO TEST
-        UpdateStatTexts(100, 100, 1, 0.5f);
+        UpdateStatTexts(100, 100, 1, -2);
         StartSkillCooldown(0, 5);
         StartSkillCooldown(1, 10);
         StartSkillCooldown(2, 15);
@@ -110,12 +110,14 @@ public class UI_PlayerUI : MonoBehaviour
     /// <summary>
     /// 공격력 방어력 공격속도 쿨타임배수를 float 형태로 입력받고 업데이트
     /// </summary>
-    public void UpdateStatTexts(float atk, float def, float asp, float cool) {
+    public void UpdateStatTexts(float atk, float def, float asp, int cool) {
+        string sign = cool >= 0 ? "+": (cool < 0 ? "-" : "");   // + (공백) - 판별
+
         atkText.text = $"ATK : {atk}";
         defText.text = $"DEF : {def}";
         aspText.text = $"ASP : {asp:0.00}";
-        coolText.text = $"Cool x {cool:0.00}";
-        coolTimeMultiplier = cool;
+        coolText.text = $"Cool {sign}{Mathf.Abs(cool)}"; // +- 1초 2초 이런식
+        coolTimeReduction = cool;
     }
 
     /// <summary>
@@ -147,7 +149,7 @@ public class UI_PlayerUI : MonoBehaviour
         targetImage.color = fadedColor;
 
 
-        float remainingTime = cooldownSeconds * coolTimeMultiplier;
+        float remainingTime = Mathf.Max(cooldownSeconds - coolTimeReduction, 0);    // 쿨타임 증감량 계산
         int displayedTime = Mathf.CeilToInt(remainingTime);
 
         targetText.text = displayedTime.ToString();

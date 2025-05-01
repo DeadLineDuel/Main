@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -10,44 +9,30 @@ public class UI_GameTimer : MonoBehaviour
 
     [SerializeField] private float timerValueTest = 0.0f;
 
-    private float timeLeft;
+    private int remainingTime = 0;
     private bool isRunning = false;
-
-    private void Start() {
-        // TEST
-        if (timerValueTest > 0) {
-            StartTimer(timerValueTest);
-        }
-        
-    }
-
-    private void Update() {
-        // TEST
-        //if (Input.GetKeyDown(KeyCode.A)) {
-        //    StopTimer();
-        //}
-    }
 
     /// <summary>
     /// 외부에서 타이머 호출하여 시작
     /// </summary>
     /// <param name="startSeconds">초 단위로 입력. ex) 5분 * 60 -> 300 </param>
-    public void StartTimer(float startSeconds) {
-        timeLeft = startSeconds;
+    public void StartTimer(int startSeconds) {
+        remainingTime = startSeconds;
         isRunning = true;
-        UpdateTimerText(timeLeft);
+        UpdateTimerText(remainingTime);
         StartCoroutine(TimerCoroutine());
     }
 
     private IEnumerator TimerCoroutine() {
-        while (isRunning && timeLeft > 0f) {
+        UpdateTimerText(remainingTime); // 최초 초기화
+        while (isRunning && remainingTime > 0f) {
             yield return new WaitForSeconds(1.0f);
-            timeLeft -= 1f;
-            UpdateTimerText(timeLeft);
-            if (timeLeft < 0f) timeLeft = 0f;
+            remainingTime -= 1;
+            UpdateTimerText(remainingTime);
+            if (remainingTime < 0f) remainingTime = 0;
         }
 
-        if (timeLeft <= 0) {
+        if (remainingTime <= 0) {
             TimeGameOver();
         }
     }
@@ -60,6 +45,7 @@ public class UI_GameTimer : MonoBehaviour
 
     private void TimeGameOver() {
         Debug.Log("UI_GameTimer | TimeGameOver 시간 오버");
+        StopTimer();
         // TODO
         // 외부로 메시지 발사
     }
@@ -71,4 +57,9 @@ public class UI_GameTimer : MonoBehaviour
         Debug.Log("UI_GameTimer | StopTimer 타이머 중지");
         isRunning = false;
     }
+
+    /// <summary>
+    /// 남은 타이머 시간 반환
+    /// </summary>
+    public int GetRemainingTime() => remainingTime;
 }
