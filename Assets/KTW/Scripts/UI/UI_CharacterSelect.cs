@@ -22,8 +22,11 @@ public class UI_CharacterSelect : MonoBehaviour {
 
     [Header("Sound")]
     [SerializeField] private AudioClip characterSelectSound;
-    [SerializeField] private AudioClip matchmakingSound;    // TODO »ç¿îµå Ãß°¡
+    [SerializeField] private AudioClip matchmakingSound;    // TODO ì‚¬ìš´ë“œ ì¶”ê°€
     private AudioSource audioSource;
+    
+    public List<Button> GetCharacterButtons { get;  set; }
+    public TextMeshProUGUI MatchingText => matchingText;
 
     private void Start() {
         InitalizedButtonsAndImages();
@@ -41,7 +44,7 @@ public class UI_CharacterSelect : MonoBehaviour {
             int index = i; // Value Capture
             characterButtons[index].onClick.AddListener(() => OnCharacterSelected(index));
             characterButtons[index].GetComponent<Image>().sprite = GameMainManager.Instance.GetCharacterPortraitImage(0);
-            // TODO Ä³¸¯ÅÍ Æ÷Æ®·¹ÀÕ ÀüºÎ 0À¸·Î µÇ¾îÀÖÀ½
+            // TODO ìºë¦­í„° í¬íŠ¸ë ˆì‡ ì „ë¶€ 0ìœ¼ë¡œ ë˜ì–´ìˆìŒ
         }
     }
 
@@ -49,6 +52,7 @@ public class UI_CharacterSelect : MonoBehaviour {
         selectedCharacterIndex = -1;
         selectedCharacterBorderImage.gameObject.SetActive(false);
         matchmakingButton.interactable = false;
+        matchingText.text = "Select a character to start matching";
     }
 
     private void UpdateMatchmakingUI(bool isMatching) {
@@ -65,39 +69,32 @@ public class UI_CharacterSelect : MonoBehaviour {
         UpdateMatchmakingUI(true);
         isMatchmaking = true;
 
-        // Å¸ÀÌ¸Ó
-        matchmakingElapsed = 0f;
-        if (matchmakingTimerCoroutine != null) {
-            StopCoroutine(matchmakingTimerCoroutine);
-        }
-        matchmakingTimerCoroutine = StartCoroutine(MatchmakingTimerRoutine());
-
         // PlayMatchmakingSound(matchmakingSound);
         GameMainManager.Instance.OnStartMatchmakingClicked();
 
     }
 
     private void OnClickCanclematchMakingtButton() {
-        Debug.Log("¸ÅÄª Ãë¼Ò ¹öÆ° Å¬¸¯");
+        Debug.Log("ë§¤ì¹­ ì·¨ì†Œ ë²„íŠ¼ í´ë¦­");
         UpdateMatchmakingUI(false);
         isMatchmaking = false;
-        // TODO ¸ÅÄª Ãë¼Ò
+        // TODO ë§¤ì¹­ ì·¨ì†Œ
     }
 
     private void OnClickBackToMainButton() {
         Debug.Log("Ui_CharacterSelect | OnClickBackToMainButton");
-        GameMainManager.Instance.OnBackToMainClicked(); // ´Ù¸¥ UI Á¢±ÙÀº ¸Å´ÏÀú¿¡¼­ Ã³¸®
+        GameMainManager.Instance.OnBackToMainClicked(); // ë‹¤ë¥¸ UI ì ‘ê·¼ì€ ë§¤ë‹ˆì €ì—ì„œ ì²˜ë¦¬
         matchmakingButton.interactable = false;
     }
 
     private void OnCharacterSelected(int index) {
         if (isMatchmaking) return;
 
-        Debug.Log($"Ä³¸¯ÅÍ {index + 1} ¼±ÅÃ");
+        Debug.Log($"ìºë¦­í„° {index + 1} ì„ íƒ");
 
         selectedCharacterIndex = index;
 
-        // »¡°£ Å×µÎ¸® ¿Å±â±â (¼±ÅÃ È¿°ú)
+        // ë¹¨ê°„ í…Œë‘ë¦¬ ì˜®ê¸°ê¸° (ì„ íƒ íš¨ê³¼)
         if (selectedCharacterBorderImage != null) {
             selectedCharacterBorderImage.gameObject.SetActive(true);
             Vector3 buttonPosition = characterButtons[index].GetComponent<RectTransform>().position;
@@ -108,7 +105,7 @@ public class UI_CharacterSelect : MonoBehaviour {
         GameMainManager.Instance.SetSelectCharacterIndex(index);
     }
 
-    // ¿ÜºÎ¿¡¼­ °ª °¡Á®°¥ ¶§?
+    // ì™¸ë¶€ì—ì„œ ê°’ ê°€ì ¸ê°ˆ ë•Œ?
     public int GetSelectedCharacter() {
         return selectedCharacterIndex;
     }
@@ -118,14 +115,5 @@ public class UI_CharacterSelect : MonoBehaviour {
         if (clip == null) return;
 
         audioSource.PlayOneShot(clip);
-    }
-
-    private IEnumerator MatchmakingTimerRoutine() {
-        while (isMatchmaking) {
-            matchmakingElapsed += Time.deltaTime;
-            int seconds = Mathf.FloorToInt(matchmakingElapsed);
-            matchingText.text = $"Find Match... {seconds}s";
-            yield return null;
-        }
     }
 }

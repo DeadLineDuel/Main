@@ -12,7 +12,6 @@ public class UI_MainMenu : MonoBehaviour
     [SerializeField] private Button quitButton;
     [SerializeField] private Slider loadingSlider;
     [SerializeField] private TextMeshProUGUI loadingText;
-    // [SerializeField] private float loadingValue = 0.0f;  // Value¸¦ UI¿¡¼­ °ü¸®ÇÏÁö ¾ÊÀ»Áöµµ? ÀÏ´Ü
 
     private void Start() {
         startButton.onClick.AddListener(() => OnClickGameStartButton());
@@ -24,26 +23,32 @@ public class UI_MainMenu : MonoBehaviour
 
     private void OnClickGameStartButton() {
         Debug.Log("UI_MainMenu | OnClickGameStartButton");
-        GameMainManager.Instance.OnStartGameClicked(); // ´Ù¸¥ UI Á¢±ÙÀº ¸Å´ÏÀú¿¡¼­ Ã³¸®
+        GameMainManager.Instance.OnStartGameClicked();
 
     }
 
     private void OnClickSettingButton() {
-        Debug.Log("¼¼ÆÃ ¹öÆ° ¹Ì±¸Çö");
+        Debug.Log("ì„¤ì • ë²„íŠ¼ í´ë¦­");
     }
 
-    private void OnClickQuitButton() {
-        Debug.Log("UI_MainMenu | OnClickQuitButton");
+    private void OnClickQuitButton()
+    {
+        // ì´ì „ ì„¸ì…˜ ë°ì´í„° ì •ë¦¬
+        GameMainManager.ClearPreviousSessionData();
+
+        // ë¡œê·¸ì•„ì›ƒ ì²˜ë¦¬
+        GameInitManager initManager = GameInitManager.GetInstance();
+        if (initManager != null)
+        {
+            initManager.LogoutPlayer();
+        }
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
         #else
-                Application.Quit();
+        Application.Quit();
         #endif
     }
-
-    /// <summary>
-    /// ¿ÜºÎ¿¡¼­ ·Îµù ¹Ù ¼³Á¤
-    /// </summary>
+    
     public void SetLoadingProgress(float value) {
         if (loadingSlider == null || loadingText == null) {
             Debug.LogError("UI_MainMenu | SetLoadingProgress | UI is not assigned");

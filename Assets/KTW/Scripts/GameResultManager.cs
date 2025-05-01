@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class GameResultManager : MonoBehaviour
 {
@@ -11,7 +10,7 @@ public class GameResultManager : MonoBehaviour
     [Header("UI Assign")]
     [SerializeField] private UI_GameResult _uiGameResult;
 
-    // ¾îµò°¡ÀÇ ¿ÜºÎ¿¡¼­ ÇÑ¹ø¿¡ °ü¸®ÇÏ´Â°Ô ÁÁÀ»Áöµµ?
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ÜºÎ¿ï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
     [Header("Data Key from PlayerPrefs")]
     [SerializeField] private string _winnerKey = "WinnerPlayerId";
     [SerializeField] private string _player1IdKey = "Player1Id";
@@ -23,10 +22,10 @@ public class GameResultManager : MonoBehaviour
     [SerializeField] private string _player1DeathsKey = "Player1Deaths";
     [SerializeField] private string _player2DeathsKey = "Player2Deaths";
 
-    private string _localPlayerId; // ÇöÀç Å¬¶óÀÌ¾ðÆ®ÀÇ ÇÃ·¹ÀÌ¾î ID 
+    private string _localPlayerId; // ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ID 
 
     private void Awake() {
-        // ½Ì±ÛÅæ ÆÐÅÏ ±¸Çö
+        // ï¿½Ì±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (_instance == null) {
             _instance = this;
             DontDestroyOnLoad(gameObject);
@@ -37,7 +36,7 @@ public class GameResultManager : MonoBehaviour
         }
 
         InitializePlayerIdentity();
-        // TODO µ¥ÀÌÅÍ ·Îµå
+        // TODO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½
         // LoadAndDisplayResults();
         _uiGameResult.UpdateResultInfoFromServer(
             "test", "test2",
@@ -47,12 +46,12 @@ public class GameResultManager : MonoBehaviour
     }
 
     private void InitializePlayerIdentity() {
-        // TODO ÀÌ°Ç ´Ù¸¥ ¹æ½ÄÀ¸·Î °¡Á®¿Í¾ß
+        // TODO ï¿½Ì°ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¾ï¿½
         _localPlayerId = PlayerPrefs.GetString("LocalPlayerId", "Player");
     }
 
     private void LoadAndDisplayResults() {
-        // °á°ú µ¥ÀÌÅÍ ·Îµå
+        // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½
         string winnerId = PlayerPrefs.GetString(_winnerKey, "Player");
 
         string player1Id = PlayerPrefs.GetString(_player1IdKey, "Player 1");
@@ -76,7 +75,7 @@ public class GameResultManager : MonoBehaviour
         ClearSavedData();
     }
 
-    // ÀúÀåÇß´ø µ¥ÀÌÅÍ »èÁ¦
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private void ClearSavedData() {
         PlayerPrefs.DeleteKey(_winnerKey);
         PlayerPrefs.DeleteKey(_player1IdKey);
@@ -89,7 +88,7 @@ public class GameResultManager : MonoBehaviour
         PlayerPrefs.DeleteKey(_player2DeathsKey);
     }
 
-    // TODO ÀÌÀü ¾À¿¡¼­ ¾Æ·¡¿Í °°Àº ¸Þ¼­µå ÀÛ¼º
+    // TODO ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ ï¿½Û¼ï¿½
     private void SaveGameResults(int winnerId) {
         PlayerPrefs.SetString("WinnerPlayerId", "Winner");
 
