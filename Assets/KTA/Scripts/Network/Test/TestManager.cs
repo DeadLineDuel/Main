@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Boss;
@@ -33,6 +32,7 @@ public class TestManager : NetworkBehaviour
         playerBossMap[clientId] = bossNetObj;
         
         StartCoroutine(WakeBoss(bossNetObj.GetComponent<BossStateMachine>()));
+        //StartCoroutine(KillBoss(bossNetObj.GetComponent<BossStateMachine>()));
     }
 
     private IEnumerator WakeBoss(BossStateMachine BossFSM)
@@ -40,6 +40,12 @@ public class TestManager : NetworkBehaviour
         Debug.Log(BossFSM.gameObject.name);
         yield return new WaitForSeconds(3f);
         BossFSM.OnWakeMessage();
+    }
+
+    private IEnumerator KillBoss(BossStateMachine BossFSM)
+    {
+        yield return new WaitForSeconds(10f);
+        BossFSM.BossStats.KillBossTest();
     }
     
     private void OnClientDisconnect(ulong clientId)
