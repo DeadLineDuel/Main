@@ -9,8 +9,6 @@ public class TestManager : NetworkBehaviour
 {
     [field: SerializeField] private GameObject bossPrefab;
     private Dictionary<ulong, NetworkObject> playerBossMap = new();
-
-    private Action OnWakeBoss;
     
     public override void OnNetworkSpawn()
     {
@@ -23,11 +21,12 @@ public class TestManager : NetworkBehaviour
 
     private void AssignBossToPlayer(ulong clientId)
     {
+        if (!IsServer) return;
         // 보스 생성 및 설정
         GameObject boss = Instantiate(bossPrefab);
         NetworkObject bossNetObj = boss.GetComponent<NetworkObject>();
-        bossNetObj.SpawnWithOwnership(clientId);
-        
+        //bossNetObj.SpawnWithOwnership(clientId);
+        bossNetObj.Spawn();
         BossCharacter bossCharacter = bossNetObj.GetComponent<BossCharacter>();
         bossCharacter.AssignedPlayerId.Value = clientId;
         
@@ -38,6 +37,7 @@ public class TestManager : NetworkBehaviour
 
     private IEnumerator WakeBoss(BossStateMachine BossFSM)
     {
+        Debug.Log(BossFSM.gameObject.name);
         yield return new WaitForSeconds(3f);
         BossFSM.OnWakeMessage();
     }
