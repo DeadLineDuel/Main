@@ -25,12 +25,18 @@ public class TestManager : NetworkBehaviour
         GameObject boss = Instantiate(bossPrefab);
         NetworkObject bossNetObj = boss.GetComponent<NetworkObject>();
         //bossNetObj.SpawnWithOwnership(clientId);
-        bossNetObj.Spawn();
         BossCharacter bossCharacter = bossNetObj.GetComponent<BossCharacter>();
         bossCharacter.AssignedPlayerId.Value = clientId;
-        
         playerBossMap[clientId] = bossNetObj;
         
+        
+        bossNetObj.Spawn();
+        
+        if (clientId != NetworkManager.Singleton.LocalClientId)
+        {
+            bossCharacter.transparencyController.SetToTransparent();
+        }
+        Debug.Log("Assigned boss" + bossCharacter.gameObject.name);
         StartCoroutine(WakeBoss(bossNetObj.GetComponent<BossStateMachine>()));
         //StartCoroutine(KillBoss(bossNetObj.GetComponent<BossStateMachine>()));
     }
