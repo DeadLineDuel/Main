@@ -8,8 +8,6 @@ namespace Boss.Skills
     {
         [field: Header("Dependencies")] 
         [field: SerializeField] protected BossCore BossCore { get; set; }
-        [field: SerializeField] protected BossCharacter bossCharacter;
-        [field: SerializeField] public SkillIndicator SkillIndicator { get; protected set; }
         
         [field: Header("Skill Data")]
         [field: SerializeField] public String BossSkillName { get; protected set; }
@@ -18,25 +16,35 @@ namespace Boss.Skills
         [field: SerializeField] public float SkillAnimationTime { get; protected set; }
         [field: SerializeField] protected float damageCoeff;
 
-        public int BossSkillHash { get; private set; }
+        protected int BossSkillHash { get; private set; }
         
         protected Collider[] Colliders = new Collider[2];
-        protected NetworkVariable<Vector3> BossPos = new NetworkVariable<Vector3>(default(Vector3));
-        protected NetworkVariable<Vector3> TargetPos = new NetworkVariable<Vector3>(default(Vector3));
+
         
         protected virtual void Awake()
         {
            BossSkillHash = Animator.StringToHash(BossSkillName);
+           SetSkillAnimationTime();
         }
-        
-        public virtual void ActivateSkill(Vector3 bossPos, Vector3 targetPos)
-        {
-            if (!IsServer) return;  // Only on Server
-            this.BossPos.Value = bossPos;
-            this.TargetPos.Value = targetPos;
-        }
+
+        public abstract void ActivateSkill();
         [ClientRpc] public virtual void ActivateIndicatorClientRpc() { }
         [ClientRpc] public virtual void ActivateSkillEffectClientRpc() { }
         public virtual void ActivateDamageCollider(float bossAtk) { }
+        
+        private void SetSkillAnimationTime()
+        {
+            AnimationClip[] clips = BossCore.NetworkAnimator.Animator.runtimeAnimatorController.animationClips;
+            foreach (var clip in clips)
+            {
+                if (clip.name == BossSkillName)
+                {
+                    AnimatorStateInfo stateInfo = BossCore.NetworkAnimator.Animator.GetCurrentAnimatorStateInfo(0); // 0은 레이어 인덱스
+                    float realTime = clip.length / (BossCore.NetworkAnimator.Animator.speed * stateInfo.speed);
+                    SkillAnimationTime = realTime;
+                    Debug.Log(clip.name + " "  + SkillAnimationTime);
+                }
+            }
+        }
     }
 }

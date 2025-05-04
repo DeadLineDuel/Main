@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 
 namespace Boss.Skills
@@ -28,8 +27,9 @@ namespace Boss.Skills
             currentSkillIndex = SelectSkill();
             currentSkill = skillsPrefab[currentSkillIndex];
             SetCurrentSkillClientRpc(currentSkillIndex);
-            StartCoroutine(ExecuteSkillSequence());
-            StartCoroutine(EndSkillAnimation(currentSkill.SkillAnimationTime));
+            
+            currentSkill.ActivateSkill();
+            StartCoroutine(SetIsSkillActive(currentSkill.SkillAnimationTime));
         }
 
         [ClientRpc]
@@ -39,25 +39,9 @@ namespace Boss.Skills
             currentSkill = skillsPrefab[skillIndex];
         }
         
-        private IEnumerator ExecuteSkillSequence()
+        private IEnumerator SetIsSkillActive(float waitTime)
         {
-            // Start Skill
             isSkillActive.Value = true;
-            currentSkill.ActivateSkill(gameObject.transform.position, gameObject.transform.position); // TODO : Get TargetPlayer
-            bossCore.NetworkAnimator.SetTrigger(currentSkill.BossSkillHash); // Play Skill Animation
-            
-            // Play Indicator
-            yield return new WaitForSeconds(currentSkill.IndicatorTime);
-            currentSkill.ActivateIndicatorClientRpc();
-            
-            // Play Effect and Damage Collider
-            yield return new WaitForSeconds(currentSkill.EffectTime);
-            currentSkill.ActivateSkillEffectClientRpc();
-            currentSkill.ActivateDamageCollider(bossCore.BossStats.Atk.Value);
-        }
-
-        private IEnumerator EndSkillAnimation(float waitTime)
-        {
             yield return new WaitForSeconds(waitTime);
             isSkillActive.Value = false;
         }

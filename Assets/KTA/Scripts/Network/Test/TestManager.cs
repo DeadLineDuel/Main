@@ -51,7 +51,7 @@ public class TestManager : NetworkBehaviour
     private IEnumerator KillBoss(BossStateMachine BossFSM)
     {
         yield return new WaitForSeconds(10f);
-        BossFSM.BossStats.KillBossTest();
+        BossFSM.BossCore.BossStats.KillBossTest();
     }
     
     private void OnClientDisconnect(ulong clientId)

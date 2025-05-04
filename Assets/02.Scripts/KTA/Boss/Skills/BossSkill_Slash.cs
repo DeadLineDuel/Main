@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using Unity.Netcode;
 
@@ -6,30 +7,57 @@ namespace Boss.Skills
     public class BossSkill_Slash : BossSkill
     {
         [field: Header("Dependencies")]
-        [field: SerializeField] private ParticleSystem hitParticle;
         [field: SerializeField] private ParticleSystem skillEffectParticle;
+        [field: SerializeField] private SkillIndicator skillIndicator;
 
         [field: Header("Skill Data")]
         [field: SerializeField] private float radius;
 
+        private Vector3 bossPos;
+        
+        public override void ActivateSkill()
+        {
+            if (!IsServer) return;  // On Server
+            
+            bossPos = BossCore.transform.position;
+            StartCoroutine(ExecuteSkillSequence());
+        }
+
+        private IEnumerator ExecuteSkillSequence()
+        {
+            BossCore.NetworkAnimator.SetTrigger(BossSkillHash);
+            
+            // Play Indicator
+            yield return new WaitForSeconds(IndicatorTime);
+            ActivateIndicatorClientRpc();
+            
+            // Play Effect and Damage Collider
+            yield return new WaitForSeconds(EffectTime);
+            ActivateSkillEffectClientRpc();
+            ActivateDamageCollider(BossCore.BossStats.Atk.Value);
+        }
+        
+        
         [ClientRpc]
         public override void ActivateIndicatorClientRpc()
         {
-            if (!bossCharacter.IsClientBoss) return;
-            SkillIndicator.ActivateIndicator(BossPos.Value, 180f, 0.5f, 0f);
+            if (!BossCore.BossCharacter.IsClientBoss) return;
+            skillIndicator.ActivateIndicator(bossPos, 180f, 0.5f, 0f);
         }
 
         [ClientRpc]
         public override void ActivateSkillEffectClientRpc()
         {
-            if (!bossCharacter.IsClientBoss) return;
+            if (!BossCore.BossCharacter.IsClientBoss) return;
             skillEffectParticle.Play();
         }
 
         public override void ActivateDamageCollider(float bossAtk)
         {
+            if (!IsServer) return;  // On Server
+            
             int layerMask = LayerMask.GetMask("Player");
-            var size = Physics.OverlapSphereNonAlloc(BossPos.Value, radius, Colliders, layerMask);
+            var size = Physics.OverlapSphereNonAlloc(bossPos, radius, Colliders, layerMask);
             
             Vector3 forward = transform.forward;
             
@@ -37,7 +65,7 @@ namespace Boss.Skills
             {
                 for  (int i = 0; i < size; i++) // Do not use foreach on NonAlloc
                 {
-                    Vector3 dir = (Colliders[i].transform.position - BossPos.Value).normalized;
+                    Vector3 dir = (Colliders[i].transform.position - bossPos).normalized;
                     float angle = Vector3.Angle(forward, dir);
                     if (angle <= 90f) // half circle
                     {
@@ -54,7 +82,7 @@ namespace Boss.Skills
         void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(BossPos.Value, radius);
+            Gizmos.DrawWireSphere(bossPos, radius);
         
             // Draw Half Circle
             int segments = 32;
@@ -66,15 +94,8 @@ namespace Boss.Skills
                 float angleB = -90f + angleStep * (i + 1);
                 Vector3 dirA = Quaternion.Euler(0, angleA, 0) * forward;
                 Vector3 dirB = Quaternion.Euler(0, angleB, 0) * forward;
-                Gizmos.DrawLine(BossPos.Value + dirA * radius, BossPos.Value + dirB * radius);
+                Gizmos.DrawLine(bossPos + dirA * radius, bossPos + dirB * radius);
             }
         }
-        
-        // [ClientRpc]
-        // private void PlayHitEffectClientRpc(Vector3 pos)
-        // {
-        //     Instantiate(hitParticle, pos, Quaternion.identity);
-        // }
-        //
     }
 }

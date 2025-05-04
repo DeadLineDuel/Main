@@ -46,13 +46,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aac4abe56911da64598c46f77a3460f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <SkillIndicator>k__BackingField: {fileID: 7641709623329352520}
+  <BossCore>k__BackingField: {fileID: 0}
   <BossSkillName>k__BackingField: BossSkill_GroundPowerHit
   <IndicatorTime>k__BackingField: 0.2
   <EffectTime>k__BackingField: 1.9
   <SkillAnimationTime>k__BackingField: 3.07
   damageCoeff: 0
   skillEffectParticle: {fileID: 7979279771974295341}
+  skillIndicator: {fileID: 7641709623329352520}
   radius: 14.5
   innerRadius: 8.5
 --- !u!1001 &5424191618450297253

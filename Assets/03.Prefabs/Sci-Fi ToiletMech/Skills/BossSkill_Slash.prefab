@@ -46,16 +46,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cd382df9d7141b4bae5545dcb989cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <SkillIndicator>k__BackingField: {fileID: 2704389321472000142}
+  <BossCore>k__BackingField: {fileID: 0}
   <BossSkillName>k__BackingField: BossSkill_Slash
   <IndicatorTime>k__BackingField: 0.4
   <EffectTime>k__BackingField: 0.5
   <SkillAnimationTime>k__BackingField: 1.2
-  hitParticle: {fileID: 8868377322452534193, guid: b1dffe30644cda9419d15c359bcc227e,
-    type: 3}
-  skillEffectParticle: {fileID: 602499406652730848}
-  radius: 10
   damageCoeff: 0
+  skillEffectParticle: {fileID: 602499406652730848}
+  skillIndicator: {fileID: 2704389321472000142}
+  radius: 10
 --- !u!1001 &346139598661466723
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -78,5 +78,9 @@ namespace Boss.Skills
     //         }
     //     }
     //
+    public override void ActivateSkill()
+    {
+        throw new System.NotImplementedException();
+    }
     }
 }
