@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,6 +16,12 @@ public class GamePlayManager_t : NetworkBehaviour
     [SerializeField] private UI_Boss _bossUI;
     [SerializeField] private UI_PlayerUI _playerUI;
     [SerializeField] private UI_GameTimer _gameTimerUI;
+
+    [Header("Object")]
+    [SerializeField] private BuffableEntity boss1;
+    [SerializeField] private BuffableEntity boss2;
+    [SerializeField] private BuffableEntity player1;
+    [SerializeField] private BuffableEntity player2;
 
     public string _localPlayerId;    // 본인의 ID (이걸 아마 외부에 들고있을것)
 
@@ -48,6 +55,7 @@ public class GamePlayManager_t : NetworkBehaviour
         UpdateBossHPFromServer("Player1", 0.5f);
         UpdateBossHPFromServer("Player2", 0.2f);
         StartGameTimer(180);
+        SetPlayerDataToManager(GameObject.Find("Player").GetComponent<BuffableEntity>());
     }
 
     /// <summary>
@@ -184,5 +192,52 @@ public class GamePlayManager_t : NetworkBehaviour
         );
 
         SceneManager.LoadScene(_resultSceneName);
+    }
+
+    /// <summary>
+    /// 보스를 할당
+    /// </summary>
+    public void SetBossData(BuffableEntity b) {
+        boss1 = b;
+        boss2 = null;
+
+        /*
+        if (NetworkManager.Singleton.IsHost) boss1 = b;
+        else boss2 = b;
+        */
+    }
+
+    /// <summary>
+    /// 외부에서 적 클라이언트의 보스 받아가기
+    /// </summary>
+    /// <returns></returns>
+    public BuffableEntity GetEnemyBoss() {
+        return NetworkManager.Singleton.IsHost ? boss2 : boss1;
+    }
+
+    public void SetPlayerDataToManager(BuffableEntity p) {
+        player1 = p;
+
+        /*
+        if (NetworkManager.Singleton.IsHost) player1 = p;
+        else player2 = p;
+        */
+    }
+
+    /// <summary>
+    /// 외부에서 플레이어 오브젝트 받아가기
+    /// </summary>
+    /// <returns></returns>
+    public BuffableEntity GetPlayer() {
+        return player1;
+        // return NetworkManager.Singleton.IsHost ? player1 : player2;
+    }
+
+    /// <summary>
+    /// 외부에서 적 오브젝트 받아가기. GetPlayer()와 반대 조건
+    /// </summary>
+    /// <returns></returns>
+    public BuffableEntity GetEnemy() {
+        return NetworkManager.Singleton.IsHost ? player2 : player1;
     }
 }

@@ -254,7 +254,7 @@ MonoBehaviour:
   buffName: 
   targetType: 0
   buffType: 0
-  buffDuration: 20
+  buffDuration: 5
   buffValue: 0
   owner: 0
   hpSlider: {fileID: 1317724553664800389}
