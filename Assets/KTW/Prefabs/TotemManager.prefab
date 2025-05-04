@@ -54,6 +54,6 @@ MonoBehaviour:
   player2AvailableSpawnPoints: 
   totemsParent: {fileID: 0}
   vbxPrefab:
-  - {fileID: 1890404263297772455, guid: 15dc05d489dc100499527297a3d6558a, type: 3}
-  - {fileID: 6265294849233314492, guid: aed60cbb59b33ae40b57aa27b9428378, type: 3}
   - {fileID: 7421336403545179076, guid: c193e05abb648614ca6c80ba1aaba6fe, type: 3}
+  - {fileID: 6265294849233314492, guid: aed60cbb59b33ae40b57aa27b9428378, type: 3}
+  - {fileID: 1890404263297772455, guid: 15dc05d489dc100499527297a3d6558a, type: 3}
