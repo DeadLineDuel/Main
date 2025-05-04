@@ -1728,13 +1728,7 @@ MonoBehaviour:
   - {fileID: 3972603183153351972}
   healItemButton: {fileID: 3078933121609825601}
   itemAmountText: {fileID: 6982159879239337556}
-  descriptionPanel: {fileID: 2025447273407208585}
-  descriptionNameText: {fileID: 2025447273723543829}
-  descriptionText: {fileID: 2025447271972089813}
-  characterName: Cosmo
-  skillData:
-    skillNames: []
-    skillDescriptions: []
+  playerIdText: {fileID: 0}
 --- !u!1 &3364296261284736792
 GameObject:
   m_ObjectHideFlags: 0
@@ -4065,30 +4059,15 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3515887370291759330}
     m_Modifications:
-    - target: {fileID: 1051615925850640535, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
+    - target: {fileID: 3527195897304593393, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
         type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 2224645683911058554, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
-        type: 3}
-      propertyPath: m_Type
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2224645683911058554, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
-        type: 3}
-      propertyPath: m_FillAmount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2224645683911058554, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
-        type: 3}
-      propertyPath: m_FillMethod
+      propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5251052755426193676, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
+    - target: {fileID: 3527195897304593393, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
         type: 3}
-      propertyPath: m_Type
-      value: 3
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5271785670392609769, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
         type: 3}
@@ -4123,7 +4102,7 @@ PrefabInstance:
     - target: {fileID: 5271785670392609769, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 500
+      value: 480
       objectReference: {fileID: 0}
     - target: {fileID: 5271785670392609769, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
         type: 3}
@@ -4190,16 +4169,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7211713434637232789, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7211713434637232789, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8271643097841650457, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
         type: 3}
       propertyPath: m_Value
@@ -4211,8 +4180,7 @@ PrefabInstance:
       value: Bar_PlayerHP
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 5675842082236688798, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c, type: 3}
