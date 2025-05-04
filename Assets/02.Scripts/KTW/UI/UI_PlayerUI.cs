@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UI_PlayerUI : MonoBehaviour
@@ -19,34 +18,26 @@ public class UI_PlayerUI : MonoBehaviour
     [SerializeField] private Image[] skillButtonImages;
     [SerializeField] private Button healItemButton;
     [SerializeField] private TextMeshProUGUI itemAmountText;
-
-
-    [SerializeField] private GameObject descriptionPanel;
-    [SerializeField] private TextMeshProUGUI descriptionNameText;
-    [SerializeField] private TextMeshProUGUI descriptionText;
+    
+    [Header("Player Info")]
+    [SerializeField] private TextMeshProUGUI playerIdText; // í”Œë ˆì´ì–´ IDë¥¼ í‘œì‹œí•  í…ìŠ¤íŠ¸ UI ì¶”ê°€
 
     private Coroutine[] cooldownCoroutines = new Coroutine[4];
     private int coolTimeReduction = 0;
+    private string playerId; // í”Œë ˆì´ì–´ ID ì €ì¥ ë³€ìˆ˜
 
     private const float UIHPBarAnimationDuration = 0.3f;
 
-    [Header("Skill Data")]
-    [SerializeField] public string characterName = "Cosmo"; // ÇöÀç Ä³¸¯ÅÍ´Â Cosmo¹Û¿¡ ¾øÀ½
-
-    [SerializeField] private CharacterSkillData skillData;
 
     private void Start() {
         InitializedButton();
-        InitializedMouseOverOutEvent();
 
-        skillData = SkillDataLoader.Instance.LoadSkillData(characterName);
-
-        // TODO TEST
-        UpdateStatTexts(100, 100, 1, -2);
-        StartSkillCooldown(0, 5);
-        StartSkillCooldown(1, 10);
-        StartSkillCooldown(2, 15);
-        StartSkillCooldown(3, 20);
+        // í…ŒìŠ¤íŠ¸ ì½”ë“œëŠ” ì‹¤ì œ í™˜ê²½ì—ì„œëŠ” ì£¼ì„ ì²˜ë¦¬
+        // UpdateStatTexts(100, 100, 1, -2);
+        // StartSkillCooldown(0, 5);
+        // StartSkillCooldown(1, 10);
+        // StartSkillCooldown(2, 15);
+        // StartSkillCooldown(3, 20);
     }
 
     private void InitializedButton() {
@@ -57,59 +48,32 @@ public class UI_PlayerUI : MonoBehaviour
         skillButton[3].onClick.AddListener(() => OnClickRButton());
     }
 
-    private void InitializedMouseOverOutEvent() {
-        // QWER ¹öÆ°¿¡ ¸¶¿ì½º ¿À¹ö / ¾Æ¿ô ÀÌº¥Æ® Ãß°¡
-        for (int i = 0; i < skillButton.Length; i++) {
-            int idx = i; // Å¬·ÎÀú Ä¸Ã³
-            EventTrigger trigger = skillButton[i].gameObject.GetComponent<EventTrigger>();
-            if (trigger == null)
-                trigger = skillButton[i].gameObject.AddComponent<EventTrigger>();
-
-            // PointerEnter
-            EventTrigger.Entry entryEnter = new EventTrigger.Entry();
-            entryEnter.eventID = EventTriggerType.PointerEnter;
-            entryEnter.callback.AddListener((data) => { ShowSkillDescription(idx); });
-            trigger.triggers.Add(entryEnter);
-
-            // PointerExit
-            EventTrigger.Entry entryExit = new EventTrigger.Entry();
-            entryExit.eventID = EventTriggerType.PointerExit;
-            entryExit.callback.AddListener((data) => { HideSkillDescription(); });
-            trigger.triggers.Add(entryExit);
+    /// <summary>
+    /// í”Œë ˆì´ì–´ ID ì„¤ì • ë° UI ì—…ë°ì´íŠ¸
+    /// </summary>
+    public void SetPlayerID(string id)
+    {
+        playerId = id;
+        
+        // í”Œë ˆì´ì–´ ID UI ì—…ë°ì´íŠ¸
+        if (playerIdText != null)
+        {
+            playerIdText.text = id;
         }
-
-        descriptionPanel.SetActive(false);
-    }
-
-    private void Update() {
-        // TODO TEST
-        if (Input.GetKeyDown(KeyCode.A)) {
-            UpdatePlayerHP(0.0f);
-        }
-
-        if (Input.GetKeyDown(KeyCode.S)) {
-            UpdatePlayerHP(0.3f);
-        }
-
-        if (Input.GetKeyDown(KeyCode.D)) {
-            UpdatePlayerHP(0.8f);
-        }
-
-        if (Input.GetKeyDown(KeyCode.F)) {
-            UpdatePlayerHP(1.0f);
-        }
+        
+        Debug.Log($"UI_PlayerUI | í”Œë ˆì´ì–´ ID ì„¤ì •: {id}");
     }
 
     /// <summary>
-    /// UI ÇÃ·¹ÀÌ¾î Ã¼·Â ¼³Á¤
+    /// UI í”Œë ˆì´ì–´ ì²´ë ¥ ì—…ë°ì´íŠ¸
     /// </summary>
-    /// <param name="hpValue">0~1»çÀÌÀÇ °ª</param>
+    /// <param name="hpValue">0~1 ì‚¬ì´ì˜ ê°’</param>
     public void UpdatePlayerHP(float hpValue) {
         playerHPSlider.DOValue(hpValue, UIHPBarAnimationDuration).SetEase(Ease.OutQuad);
     }
 
     /// <summary>
-    /// È¸º¹ ¾ÆÀÌÅÛ »ç¿ë °¡´É È½¼ö
+    /// íšŒë³µ ì•„ì´í…œ ë‚¨ì€ ì‚¬ìš© íšŸìˆ˜
     /// </summary>
     /// <param name="count"></param>
     public void UpdateItemAmount(int count) {
@@ -117,54 +81,65 @@ public class UI_PlayerUI : MonoBehaviour
     }
 
 
-    // TODO PlayerÀÇ ¹öÆ°¿¡ ¿¬°á
+    // í”Œë ˆì´ì–´ ìŠ¤í‚¬ ë²„íŠ¼ ì´ë²¤íŠ¸
     public void OnClickQButton() {
-        Debug.Log("Pressd Q");
+        Debug.Log("Pressed Q");
+        OnSkillButtonPressed(0);
     }
 
     public void OnClickWButton() {
-        Debug.Log("Pressd W");
+        Debug.Log("Pressed W");
+        OnSkillButtonPressed(1);
     }
 
     public void OnClickEButton() {
-        Debug.Log("Pressd E");
+        Debug.Log("Pressed E");
+        OnSkillButtonPressed(2);
     }
 
     public void OnClickRButton() {
-        Debug.Log("Pressd R");
+        Debug.Log("Pressed R");
+        OnSkillButtonPressed(3);
     }
 
     public void OnSkillButtonPressed(int skillIndex) {
-        // TODO ÇÃ·¹ÀÌ¾î ÂÊ ±¸Çö º¸°í À§³ª ¾Æ·¡°Å·Î ¼öÁ¤.
+        // í”Œë ˆì´ì–´ ìŠ¤í‚¬ ì‚¬ìš© ë¡œì§ ì—°ê²°
+        // ë„¤íŠ¸ì›Œí¬ í™˜ê²½ì—ì„œëŠ” ì„œë²„ì— ìŠ¤í‚¬ ì‚¬ìš© ìš”ì²­
+        if (!string.IsNullOrEmpty(playerId))
+        {
+            // ì—¬ê¸°ì— ìŠ¤í‚¬ ì‚¬ìš© ì„œë²„ ìš”ì²­ ë¡œì§ ì¶”ê°€
+            Debug.Log($"UI_PlayerUI | í”Œë ˆì´ì–´ {playerId}ê°€ ìŠ¤í‚¬ {skillIndex} ì‚¬ìš© ìš”ì²­");
+        }
     }
 
 
     public void OnClickHealItemButton() {
         Debug.Log("UI_PlayerUI | OnClickHealItemButton");
+        // í•„ìš”ì‹œ í ì•„ì´í…œ ì‚¬ìš© ì„œë²„ ìš”ì²­ ë¡œì§ ì¶”ê°€
     }
 
     /// <summary>
-    /// °ø°İ·Â ¹æ¾î·Â °ø°İ¼Óµµ ÄğÅ¸ÀÓ¹è¼ö¸¦ float ÇüÅÂ·Î ÀÔ·Â¹Ş°í ¾÷µ¥ÀÌÆ®
+    /// ê³µê²©ë ¥ ë°©ì–´ë ¥ ê³µê²©ì†ë„ ì¿¨íƒ€ì„ë³´ë„ˆìŠ¤ float í˜•íƒœë¡œ ì…ë ¥ë°›ê³  ì—…ë°ì´íŠ¸
     /// </summary>
     public void UpdateStatTexts(float atk, float def, float asp, int cool) {
-        string sign = cool >= 0 ? "+": (cool < 0 ? "-" : "");   // + (°ø¹é) - ÆÇº°
+        string sign = cool >= 0 ? "+": (cool < 0 ? "-" : "");   // + (ì–‘ìˆ˜) - ìŒìˆ˜
 
         atkText.text = $"ATK : {atk}";
         defText.text = $"DEF : {def}";
         aspText.text = $"ASP : {asp:0.00}";
-        coolText.text = $"Cool {sign}{Mathf.Abs(cool)}"; // +- 1ÃÊ 2ÃÊ ÀÌ·±½Ä
+        coolText.text = $"Cool {sign}{Mathf.Abs(cool)}"; // +- 1ì´ˆ 2ì´ˆ ì´ëŸ°ì‹
         coolTimeReduction = cool;
     }
 
     /// <summary>
-    /// ¿ÜºÎ¿¡¼­ ½ºÅ³ ÄğÅ¸ÀÓÀ» ½ÃÀÛÇÒ ¶§ È£Ãâ
+    /// ì™¸ë¶€ì—ì„œ ìŠ¤í‚¬ ì¿¨íƒ€ì„ì„ ì¤„ì´ê³  ì‹¶ì„ ë•Œ í˜¸ì¶œ
     /// skillIndex: 0=Q, 1=W, 2=E, 3=R
-    /// cooldownSeconds: ÄğÅ¸ÀÓ(ÃÊ)
+    /// cooldownSeconds: ì¿¨íƒ€ì„(ì´ˆ)
     /// </summary>
     public void StartSkillCooldown(int skillIndex, int cooldownSeconds) {
         if (!IsValidSkillIndex(skillIndex)) return;
 
-        // ±âÁ¸ ÄğÅ¸ÀÓ ÄÚ·çÆ¾ Ã¼Å©
+        // ê¸°ì¡´ ì¿¨íƒ€ì„ ì½”ë£¨í‹´ ì²´í¬
         if (cooldownCoroutines[skillIndex] != null) {
             StopCoroutine(cooldownCoroutines[skillIndex]);
         }
@@ -185,7 +160,7 @@ public class UI_PlayerUI : MonoBehaviour
         targetImage.color = fadedColor;
 
 
-        float remainingTime = Mathf.Max(cooldownSeconds - coolTimeReduction, 0);    // ÄğÅ¸ÀÓ Áõ°¨·® °è»ê
+        float remainingTime = Mathf.Max(cooldownSeconds - coolTimeReduction, 0);    // ì¿¨íƒ€ì„ ë³´ë„ˆìŠ¤ ì ìš©
         int displayedTime = Mathf.CeilToInt(remainingTime);
 
         targetText.text = displayedTime.ToString();
@@ -204,18 +179,5 @@ public class UI_PlayerUI : MonoBehaviour
         targetImage.color = originalColor;
 
         cooldownCoroutines[skillIndex] = null;
-    }
-
-    private void ShowSkillDescription(int idx) {
-        if (descriptionPanel == null || descriptionNameText == null || descriptionText == null) return;
-
-        descriptionPanel.SetActive(true);
-        descriptionNameText.text = skillData.skillNames[idx];
-        descriptionText.text = skillData.skillDescriptions[idx];
-    }
-
-    private void HideSkillDescription() {
-        if (descriptionPanel != null)
-            descriptionPanel.SetActive(false);
     }
 }

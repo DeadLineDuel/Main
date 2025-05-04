@@ -114,6 +114,7 @@ GameObject:
   - component: {fileID: 5456429169243359456}
   - component: {fileID: 3567556550392498870}
   - component: {fileID: 7238302114483702410}
+  - component: {fileID: 6676537763322722243}
   - component: {fileID: 7200049829408491293}
   m_Layer: 0
   m_Name: BuffTotem
@@ -210,6 +211,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.5, y: 7.708928, z: 1.5}
   m_Center: {x: -0.0000038146973, y: 3.3773808, z: 0.00000031657885}
+--- !u!114 &6676537763322722243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8859369014219497724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 0
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &7200049829408491293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,6 +249,8 @@ MonoBehaviour:
   attackSpeed: 1
   moveSpeed: 5
   coolTime: 1
+  maxHP: 100
+  currentHP: 100
   buffName: 
   targetType: 0
   buffType: 0
