@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2761967847124563223}
   - component: {fileID: 8913718389152065241}
   - component: {fileID: 8488113987207176169}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ProtoPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Boss;
@@ -9,8 +8,6 @@ public class TestManager : NetworkBehaviour
 {
     [field: SerializeField] private GameObject bossPrefab;
     private Dictionary<ulong, NetworkObject> playerBossMap = new();
-
-    private Action OnWakeBoss;
     
     public override void OnNetworkSpawn()
     {
@@ -23,23 +20,38 @@ public class TestManager : NetworkBehaviour
 
     private void AssignBossToPlayer(ulong clientId)
     {
+        if (!IsServer) return;
         // 보스 생성 및 설정
         GameObject boss = Instantiate(bossPrefab);
         NetworkObject bossNetObj = boss.GetComponent<NetworkObject>();
-        bossNetObj.SpawnWithOwnership(clientId);
-        
+        //bossNetObj.SpawnWithOwnership(clientId);
         BossCharacter bossCharacter = bossNetObj.GetComponent<BossCharacter>();
         bossCharacter.AssignedPlayerId.Value = clientId;
-        
         playerBossMap[clientId] = bossNetObj;
         
+        
+        bossNetObj.Spawn();
+        
+        if (clientId != NetworkManager.Singleton.LocalClientId)
+        {
+            bossCharacter.transparencyController.SetToTransparent();
+        }
+        Debug.Log("Assigned boss" + bossCharacter.gameObject.name);
         StartCoroutine(WakeBoss(bossNetObj.GetComponent<BossStateMachine>()));
+        //StartCoroutine(KillBoss(bossNetObj.GetComponent<BossStateMachine>()));
     }
 
     private IEnumerator WakeBoss(BossStateMachine BossFSM)
     {
+        Debug.Log(BossFSM.gameObject.name);
         yield return new WaitForSeconds(3f);
         BossFSM.OnWakeMessage();
+    }
+
+    private IEnumerator KillBoss(BossStateMachine BossFSM)
+    {
+        yield return new WaitForSeconds(10f);
+        BossFSM.BossStats.KillBossTest();
     }
     
     private void OnClientDisconnect(ulong clientId)
