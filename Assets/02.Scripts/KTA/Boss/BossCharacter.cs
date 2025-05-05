@@ -33,7 +33,8 @@ namespace Boss
         {
             if (this.targetPlayer == null)
             {
-                targetPlayer = GamePlayManager.Instance.GetBoss(NetworkManager.Singleton.LocalClientId).transform;
+                //this.targetPlayer = GamePlayManager.Instance.GetBoss(NetworkManager.Singleton.LocalClientId).transform;
+                this.targetPlayer = TempGetTargetPlayer();
             }
             
             targetPlayer = this.targetPlayer;
@@ -44,5 +45,18 @@ namespace Boss
         {
             return targetPlayer.position;
         }
+
+        private Transform TempGetTargetPlayer()
+        {
+            foreach (NetworkObject netObj in FindObjectsOfType<NetworkObject>())
+            {
+                if (netObj.gameObject.CompareTag("Player"))
+                {
+                    return netObj.gameObject.transform;
+                }
+            }
+            return null;
+        }
+        
     }
 }

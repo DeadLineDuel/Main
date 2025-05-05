@@ -30,8 +30,8 @@ namespace Boss.Skills
             for (int i = 0; i < 3; i++)
             {
                 yield return new WaitForSeconds(IndicatorTime);
-                targetPos = gameObject.transform.position;
-                // targetPos = BossCore.BossCharacter.GetTargetPosition; TODO: Set Target
+                //targetPos = gameObject.transform.position; Test Code
+                targetPos = BossCore.BossCharacter.GetTargetPosition();
                 ActivateIndicatorClientRpc();
                 yield return new WaitForSeconds(EffectTime);
                 ActivateSkillEffectClientRpc();
@@ -43,13 +43,15 @@ namespace Boss.Skills
         public override void ActivateIndicatorClientRpc()
         {
             if (!BossCore.BossCharacter.IsClientBoss) return;
+            skillIndicator.transform.position = targetPos;
             skillIndicator.Play();
         }
 
         [ClientRpc]
         public override void ActivateSkillEffectClientRpc()
         {
-            if (!BossCore.BossCharacter.IsClientBoss) return;;
+            if (!BossCore.BossCharacter.IsClientBoss) return;
+            skillEffectParticle.transform.position = targetPos;
             skillEffectParticle.Play();
         }
 
