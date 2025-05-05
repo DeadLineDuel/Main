@@ -17,7 +17,7 @@ namespace Stats.Boss
         public NetworkVariable<float> Speed = new(writePerm: NetworkVariableWritePermission.Server);
         public NetworkVariable<float> CurrentHealth = new(writePerm: NetworkVariableWritePermission.Server);
 
-        public Action OnDeath;
+        public event Action OnDeath;
         
         public bool IsDead => CurrentHealth.Value <= 0f;
 
@@ -34,13 +34,29 @@ namespace Stats.Boss
             }
         }
 
+        public override void OnNetworkDespawn()
+        {
+            UnsubscribeEvents();
+        }
+
+        private void UnsubscribeEvents()
+        {
+            OnDeath = null;
+            MaxHealth.OnValueChanged = null;
+            Atk.OnValueChanged = null;
+            Def.OnValueChanged = null;
+            AtkSpeed.OnValueChanged = null;
+            Speed.OnValueChanged = null;
+            CurrentHealth.OnValueChanged = null;
+        }
+        
         public void TakeDamage(float damage)
         {
             if (!IsServer) return;
             if (IsDead) return;
             
             // TODO : Add Def Calculation
-            CurrentHealth.Value = Math.Max(0, CurrentHealth.Value - damage);
+            CurrentHealth.Value = Math.Max(0, CurrentHealth.Value - (damage - Def.Value));
             if (IsDead)
             {
                 OnDeath?.Invoke();

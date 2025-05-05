@@ -30,7 +30,8 @@ namespace Boss.Skills
             for (int i = 0; i < 3; i++)
             {
                 yield return new WaitForSeconds(IndicatorTime);
-                targetPos = gameObject.transform.position;// TODO: Set targetPos
+                targetPos = gameObject.transform.position;
+                // targetPos = BossCore.BossCharacter.GetTargetPosition; TODO: Set Target
                 ActivateIndicatorClientRpc();
                 yield return new WaitForSeconds(EffectTime);
                 ActivateSkillEffectClientRpc();

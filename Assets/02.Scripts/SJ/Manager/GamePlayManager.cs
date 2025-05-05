@@ -37,10 +37,16 @@ public class GamePlayManager : NetworkBehaviour
     private Dictionary<string, int> playerDeathCount = new Dictionary<string, int>();
     private NetworkObject spawnedBoss;
     
+    // Id를 통한 오브젝트 검색
+    private Dictionary<ulong, NetworkObject> connectedPlayersId = new Dictionary<ulong, NetworkObject>();
+    private Dictionary<ulong, BossCore> connectedBosses = new Dictionary<ulong, BossCore>();
+    private Dictionary<ulong, ulong> connectedOpponents = new Dictionary<ulong, ulong>();
+    
     // 게임 상태 네트워크 변수
     private NetworkVariable<bool> isBossSpawned = new NetworkVariable<bool>(false);
     private NetworkVariable<bool> isGameOver = new NetworkVariable<bool>(false);
-    private NetworkVariable<float> bossHpPercentage = new NetworkVariable<float>(1.0f);
+    private NetworkVariable<float> bossHpPercentage = new NetworkVariable<float>(1.0f); 
+    // TODO: 어떤 보스?
     
     // 로컬 플레이어 정보
     public string localPlayerId { get; private set; }
@@ -128,6 +134,20 @@ public class GamePlayManager : NetworkBehaviour
         // 플레이어 스폰 처리
         SpawnPlayerServerRpc(clientId);
         SpawnBoss(clientId);
+
+        if (IsServer)
+        {
+            // 클라이언트 2개가 연결되면
+            if (NetworkManager.Singleton.ConnectedClients.Count == 2)
+            {
+                var clientIds = NetworkManager.Singleton.ConnectedClientsIds;
+                ulong clientA = clientIds[0];
+                ulong clientB = clientIds[1];
+                connectedOpponents[clientA] = clientB;
+                connectedOpponents[clientB] = clientA;
+                SyncOpponentsClientRpc(clientA, clientB);
+            }
+        }
     }
     
     private void OnClientDisconnected(ulong clientId)
@@ -147,6 +167,10 @@ public class GamePlayManager : NetworkBehaviour
         
         playerPillarInteraction.Remove(playerId);
         playerDeathCount.Remove(playerId);
+        
+        // connectedOpponents.Remove(clientId); 클라이언트에서도 삭제해야됨
+        // connectedBosses.Remove(clientId);
+        // connectedPlayersId.Remove(clientId);
         
         // 연결 해제로 인해 게임을 종료해야 하는지 확인
         CheckGameState();
@@ -185,6 +209,8 @@ public class GamePlayManager : NetworkBehaviour
             }
             
             connectedPlayers[playerId] = networkObject;
+            connectedPlayersId[clientId] = networkObject;
+            SyncConnectedPlayerClientRpc(clientId, networkObject.NetworkObjectId);
         }
         else
         {
@@ -255,14 +281,19 @@ public class GamePlayManager : NetworkBehaviour
         
         if (bossNetObject != null)
         {
-            BossCharacter bossCharacter = bossNetObject.GetComponent<BossCharacter>();
-            bossCharacter.AssignedPlayerId.Value = clientId;
+            BossCore bossCore = bossInstance.GetComponent<BossCore>();
+            
+            connectedBosses.Add(clientId, bossCore);
+
+            bossCore.BossCharacter.AssignedPlayerId.Value = clientId;
             
             bossNetObject.Spawn();
             spawnedBoss = bossNetObject;
-        
+
+            SyncConnectedBossesClientRpc(clientId, bossNetObject.NetworkObjectId);
+            
             // 보스 이벤트 설정
-            BossStats bossStats = bossNetObject.GetComponent<BossStats>();
+            BossStats bossStats = bossCore.BossStats;
             if (bossStats != null)
             {
                 bossStats.CurrentHealth.OnValueChanged += UpdateBossHP;
@@ -625,6 +656,37 @@ public class GamePlayManager : NetworkBehaviour
         // 결과 씬 로드
         SceneManager.LoadScene(_resultSceneName);
     }
+
+    [ClientRpc]
+    private void SyncOpponentsClientRpc(ulong clientA, ulong clientB)
+    {
+        connectedOpponents[clientA] = clientB;
+        connectedOpponents[clientB] = clientA;
+    }
+
+    [ClientRpc]
+    private void SyncConnectedPlayerClientRpc(ulong clientId, ulong networkObjectId)
+    {
+        NetworkObject bossNetObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
+        if (bossNetObj != null)
+        {
+            connectedPlayersId[clientId] = bossNetObj;
+        }
+    }
+    
+    [ClientRpc]
+    private void SyncConnectedBossesClientRpc(ulong clientId, ulong networkObjectId)
+    {
+        NetworkObject bossNetObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
+        if (bossNetObj != null)
+        {
+            BossCore bossCore = bossNetObj.GetComponent<BossCore>();
+            if (bossCore != null)
+            {
+                connectedBosses[clientId] = bossCore;
+            }
+        }
+    }
     
     #endregion
     
@@ -704,6 +766,21 @@ public class GamePlayManager : NetworkBehaviour
     }
     
     #endregion
+
+    public NetworkObject GetPlayer(ulong clientId)
+    {
+        return connectedPlayersId[clientId];
+    }
+
+    public BossCore GetBoss(ulong clientId)
+    {
+        return connectedBosses[clientId];
+    }
+
+    public ulong GetOpponentId(ulong clientId)
+    {
+        return connectedOpponents[clientId];
+    }
 }
 
 // 플레이어 결과 정보를 저장하는 헬퍼 클래스
