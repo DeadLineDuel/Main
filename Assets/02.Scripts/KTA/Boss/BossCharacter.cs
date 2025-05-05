@@ -18,7 +18,7 @@ namespace Boss
 
             if (IsClient)
             {
-                if (AssignedPlayerId.Value == NetworkManager.Singleton.LocalClientId)
+                if (IsClientBoss)
                 {
                     transparencyController.SetToOpaque();
                 }
@@ -50,7 +50,7 @@ namespace Boss
         {
             foreach (NetworkObject netObj in FindObjectsOfType<NetworkObject>())
             {
-                if (netObj.gameObject.CompareTag("Player"))
+                if (netObj.gameObject.CompareTag("Player") && netObj.OwnerClientId == AssignedPlayerId.Value)
                 {
                     return netObj.gameObject.transform;
                 }

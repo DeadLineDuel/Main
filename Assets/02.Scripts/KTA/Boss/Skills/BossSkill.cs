@@ -28,8 +28,8 @@ namespace Boss.Skills
         }
 
         public abstract void ActivateSkill();
-        [ClientRpc] public virtual void ActivateIndicatorClientRpc() { }
-        [ClientRpc] public virtual void ActivateSkillEffectClientRpc() { }
+        [ClientRpc] protected virtual void ActivateIndicatorClientRpc() { }
+        [ClientRpc] protected virtual void ActivateSkillEffectClientRpc() { }
         public virtual void ActivateDamageCollider(float bossAtk) { }
         
         private void SetSkillAnimationTime()
@@ -39,8 +39,7 @@ namespace Boss.Skills
             {
                 if (clip.name == BossSkillName)
                 {
-                    AnimatorStateInfo stateInfo = BossCore.NetworkAnimator.Animator.GetCurrentAnimatorStateInfo(0); // 0은 레이어 인덱스
-                    float realTime = clip.length / (BossCore.NetworkAnimator.Animator.speed * stateInfo.speed);
+                    float realTime = clip.length / (BossCore.NetworkAnimator.Animator.speed);
                     SkillAnimationTime = realTime;
                     Debug.Log(clip.name + " "  + SkillAnimationTime);
                 }

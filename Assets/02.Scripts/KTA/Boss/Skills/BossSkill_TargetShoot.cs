@@ -19,7 +19,6 @@ namespace Boss.Skills
         {
             if (!IsServer) return;  // On Server
             
-            // Get Target Pos
             StartCoroutine(ExecuteSkillSequence());
         }
 
@@ -30,25 +29,35 @@ namespace Boss.Skills
             for (int i = 0; i < 3; i++)
             {
                 yield return new WaitForSeconds(IndicatorTime);
-                //targetPos = gameObject.transform.position; Test Code
                 targetPos = BossCore.BossCharacter.GetTargetPosition();
+                targetPos.y = 0.1f;
+                SyncTargetPosClientRpc(targetPos);
+                
                 ActivateIndicatorClientRpc();
+                
                 yield return new WaitForSeconds(EffectTime);
                 ActivateSkillEffectClientRpc();
                 ActivateDamageCollider(BossCore.BossStats.Atk.Value);
             }
         }
+
+        [ClientRpc]
+        private void SyncTargetPosClientRpc(Vector3 pos)
+        {
+            targetPos = pos;
+        }
         
         [ClientRpc]
-        public override void ActivateIndicatorClientRpc()
+        protected override void ActivateIndicatorClientRpc()
         {
             if (!BossCore.BossCharacter.IsClientBoss) return;
+            Debug.Log(targetPos);
             skillIndicator.transform.position = targetPos;
             skillIndicator.Play();
         }
 
         [ClientRpc]
-        public override void ActivateSkillEffectClientRpc()
+        protected override void ActivateSkillEffectClientRpc()
         {
             if (!BossCore.BossCharacter.IsClientBoss) return;
             skillEffectParticle.transform.position = targetPos;
