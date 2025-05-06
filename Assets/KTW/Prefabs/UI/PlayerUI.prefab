@@ -1728,6 +1728,9 @@ MonoBehaviour:
   - {fileID: 3972603183153351972}
   healItemButton: {fileID: 3078933121609825601}
   itemAmountText: {fileID: 6982159879239337556}
+  skillDescriptionPanel: {fileID: 2025447273407208585}
+  skillNameText: {fileID: 2025447273723543829}
+  skillDescriptionText: {fileID: 2025447271972089813}
   playerIdText: {fileID: 0}
 --- !u!1 &3364296261284736792
 GameObject:
@@ -4167,6 +4170,16 @@ PrefabInstance:
     - target: {fileID: 5271785670392609769, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7211713434637232789, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7211713434637232789, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,
+        type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8271643097841650457, guid: 9fbe65521d0b1a94d92a6837bd9c0a9c,

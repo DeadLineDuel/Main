@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UI_PlayerUI : MonoBehaviour
@@ -18,7 +19,12 @@ public class UI_PlayerUI : MonoBehaviour
     [SerializeField] private Image[] skillButtonImages;
     [SerializeField] private Button healItemButton;
     [SerializeField] private TextMeshProUGUI itemAmountText;
-    
+
+    [Header("Skill Description")]
+    [SerializeField] private GameObject skillDescriptionPanel;
+    [SerializeField] private TextMeshProUGUI skillNameText;
+    [SerializeField] private TextMeshProUGUI skillDescriptionText;
+
     [Header("Player Info")]
     [SerializeField] private TextMeshProUGUI playerIdText; // 플레이어 ID를 표시할 텍스트 UI 추가
 
@@ -31,7 +37,7 @@ public class UI_PlayerUI : MonoBehaviour
 
     private void Start() {
         InitializedButton();
-
+        skillDescriptionPanel.SetActive(false);
         // 테스트 코드는 실제 환경에서는 주석 처리
         // UpdateStatTexts(100, 100, 1, -2);
         // StartSkillCooldown(0, 5);
@@ -46,6 +52,12 @@ public class UI_PlayerUI : MonoBehaviour
         skillButton[1].onClick.AddListener(() => OnClickWButton());
         skillButton[2].onClick.AddListener(() => OnClickEButton());
         skillButton[3].onClick.AddListener(() => OnClickRButton());
+
+        // 마우스 호버 이벤트
+        for (int i = 0; i < skillButton.Length; i++) {
+            int index = i; // Value Capture
+            AddMouseHoverEventSkillDescrption(index);
+        }
     }
 
     /// <summary>
@@ -179,5 +191,48 @@ public class UI_PlayerUI : MonoBehaviour
         targetImage.color = originalColor;
 
         cooldownCoroutines[skillIndex] = null;
+    }
+
+    private void AddMouseHoverEventSkillDescrption(int index) {
+        EventTrigger trigger = skillButton[index].gameObject.GetComponent<EventTrigger>();
+        if (trigger == null) trigger = skillButton[index].gameObject.AddComponent<EventTrigger>();
+
+        // PointerEnter 이벤트
+        EventTrigger.Entry entryEnter = new EventTrigger.Entry();
+        entryEnter.eventID = EventTriggerType.PointerEnter;
+        entryEnter.callback.AddListener((data) => ShowSkillDescription(index));
+        trigger.triggers.Add(entryEnter);
+
+        // PointerExit 이벤트
+        EventTrigger.Entry entryExit = new EventTrigger.Entry();
+        entryExit.eventID = EventTriggerType.PointerExit;
+        entryExit.callback.AddListener((data) => HideSkillDescription());
+        trigger.triggers.Add(entryExit);
+    }
+
+    private void ShowSkillDescription(int skillIndex) {
+        string characterName = GetCurrentCharacterName();
+        CharacterSkillData data = SkillDataLoader.Instance.LoadSkillData(characterName);
+        if (data != null && skillIndex < data.skillNames.Length) {
+            skillNameText.text = data.skillNames[skillIndex];
+            skillDescriptionText.text = data.skillDescriptions[skillIndex];
+            skillDescriptionPanel.SetActive(true);
+            // 패널 위치 조정 (버튼 옆에 표시)
+            //Vector3 buttonPos = skillButton[skillIndex].transform.position;
+            //skillDescriptionPanel.transform.position = new Vector3(
+            //    buttonPos.x + 200,
+            //    buttonPos.y,
+            //    buttonPos.z
+            //);
+        }
+    }
+
+    private void HideSkillDescription() {
+        skillDescriptionPanel.SetActive(false);
+    }
+
+    private string GetCurrentCharacterName() {
+        // 현재는 Cosmo만 사용
+        return "Cosmo";
     }
 }
