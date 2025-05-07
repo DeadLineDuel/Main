@@ -97,7 +97,7 @@ public class QuadViewCinemachine : MonoBehaviour
             return;
             
         // 여기에 디버그 추가
-        Debug.Log($"Update 실행: playerTransform = {_playerTransform?.name}");
+        //Debug.Log($"Update 실행: playerTransform = {_playerTransform?.name}");
         
         // 마우스 휠로 줌인/줌아웃
         float scrollDelta = Input.mouseScrollDelta.y;

@@ -76,8 +76,8 @@ MonoBehaviour:
   damageCoeff: 0
   skillEffectParticle: {fileID: 7979279771974295341}
   skillIndicator: {fileID: 7641709623329352520}
-  radius: 14.5
-  innerRadius: 8.5
+  radius: 75
+  innerRadius: 40
 --- !u!1001 &5424191618450297253
 PrefabInstance:
   m_ObjectHideFlags: 0

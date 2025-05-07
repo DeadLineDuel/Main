@@ -133,7 +133,7 @@ namespace Boss
             if (!StateMachine.IsServer) return; // Only on Server
             
             Debug.Log("[Boss] Chase State");
-            Core.NavMeshAgent.speed = StateMachine.MovementSpeed;
+            Core.NavMeshAgent.speed = Core.BossStats.Speed.Value;
         }
         
         public override void Tick(float deltaTime)
@@ -149,7 +149,7 @@ namespace Boss
             TurnToPlayer();
             MoveToPlayer(deltaTime);
             
-            float speedPercent = Core.NavMeshAgent.velocity.magnitude / StateMachine.MovementSpeed;
+            float speedPercent = Core.NavMeshAgent.velocity.magnitude / Core.NavMeshAgent.speed;
             SetAnimatorFloat(speedHash, speedPercent, AnimatorDampTime, deltaTime);
         }
 

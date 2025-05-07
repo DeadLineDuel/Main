@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class TransparencyController : NetworkBehaviour
 {
@@ -40,6 +41,11 @@ public class TransparencyController : NetworkBehaviour
         
         foreach (var renderer in GetComponentsInChildren<Renderer>())
         {
+            if (transparencyState == TransparencyState.Transparent)
+            {
+                renderer.shadowCastingMode = ShadowCastingMode.Off;
+                renderer.receiveShadows = false;
+            }
             Material[] originalMats = renderer.materials;
             for (int i = 0; i < originalMats.Length; i++)
             {

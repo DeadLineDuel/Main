@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using KTA.Test;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_BuffDebuff : MonoBehaviour
+public class UI_BuffDebuff : NetworkBehaviour
 {
     [Header("UI Assign")]
     [SerializeField] private TMP_Text cpText;
@@ -15,7 +18,7 @@ public class UI_BuffDebuff : MonoBehaviour
     [SerializeField] private Button minimizeRestoreButton;
     [SerializeField] private CanvasGroup minimizeCanvasGroup;
     [SerializeField] private CanvasGroup minimizeRestoreCanvasGroup;
-    [SerializeField] private GameObject mainPanel;  // ÃÖ¼ÒÈ­ÇÒ ¶§ »ç¶óÁö°ÔÇÒ ÆÐ³Î
+    [SerializeField] private GameObject mainPanel;  // ï¿½Ö¼ï¿½È­ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½
     [SerializeField] private RectTransform backgroundRect;
 
     private int selectedTabIndex = 0;
@@ -44,26 +47,46 @@ public class UI_BuffDebuff : MonoBehaviour
 
     public List<BuffTotem> spawnedTotem = new List<BuffTotem>();
 
+    [SerializeField] private TESTCPController CPController;
 
-    private void Start() {
+    // private void Start() {
+    //     LoadBuffDataFromJson();
+    //     CreateScrollViewContentUI();
+    //     BindButtonEvent();
+    //
+    //     SelectTab(selectedTabIndex);    // Initial Value -> 0
+    //
+    //     AddCP(1000); // TODO TEST
+    // }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        
         LoadBuffDataFromJson();
         CreateScrollViewContentUI();
         BindButtonEvent();
 
         SelectTab(selectedTabIndex);    // Initial Value -> 0
-
-        AddCP(1000); // TODO TEST
     }
 
+    public void Init()
+    {
+        ulong clientId = NetworkManager.Singleton.LocalClientId;
+        CPController = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<TESTCPController>();
+        CPController.CP.OnValueChanged += OnCPChange;
+        Debug.Log("CPController" + CPController);
+    }
+    
     private void BindButtonEvent() {
-        // Player Enemy Boss ÅÇ
+        // Player Enemy Boss ï¿½ï¿½
         for (int i = 0; i < tabButtons.Length; i++) {
             int index = i; // Value Capture
             tabButtons[i].onClick.AddListener(() => SelectTab(index));
         }
-        applyButton.onClick.AddListener(() => ClickApplyButton());  // Àû¿ë ¹öÆ°
+        applyButton.onClick.AddListener(() => ClickApplyButton());  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
 
-        // ÃÖ¼ÒÈ­
+        // ï¿½Ö¼ï¿½È­
         minimizeButton.onClick.AddListener(() => ClickMinimizeButton());
         minimizeRestoreButton.onClick.AddListener(() => ClickMinimizeRestoreButton());
     }
@@ -98,7 +121,6 @@ public class UI_BuffDebuff : MonoBehaviour
         item.Init(data, this);
     }
 
-
     private void SelectTab(int index) {
         selectedTabIndex = index;
         DeselectItem();
@@ -111,20 +133,34 @@ public class UI_BuffDebuff : MonoBehaviour
     }
 
     /// <summary>
-    /// ¿ÜºÎ¿¡¼­ ÀÔ·Â¹Þ¾Æ CP¸¦ Áõ°¨
+    /// ï¿½ÜºÎ¿ï¿½ï¿½ï¿½ ï¿½Ô·Â¹Þ¾ï¿½ CPï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     /// <param name="value"></param>
     public void AddCP(int value) {
         currentCP += value;
-        SetCPText(currentCP);
+
+        AddCPServerRpc(value);
     }
 
+    [ServerRpc]
+    public void AddCPServerRpc(int value)
+    {
+        if (CPController != null)
+        {
+            CPController.CP.Value += value;
+        }
+    }
+
+    private void OnCPChange(int prev, int next)
+    {
+        SetCPText(next);
+    }
     private void SetCPText(int value) {
         cpText.text = value.ToString();
     }
 
     public void SelectItem(BuffDebuffItem item) {
-        DeselectItem(); // ±âÁ¸ ¾ÆÀÌÅÛ ¼±ÅÃ ÇØÁ¦
+        DeselectItem(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         selectedItem = item;
         item.GetComponent<Image>().color = selectedItemColor;
     }
@@ -138,15 +174,16 @@ public class UI_BuffDebuff : MonoBehaviour
 
     private void ClickApplyButton() {
         if (selectedItem == null) return;
-        if (currentCP < selectedItem.buffCost) return;
+        if (CPController.CP.Value < selectedItem.buffCost) return;
         if (CheckExistSameBuff()) {
             DeselectItem();
-            Debug.Log("ÀÌ ¹öÇÁ´Â Áßº¹ÀÓ!");
+            Debug.Log("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ßºï¿½ï¿½ï¿½!");
             return;
         }
 
+        AddCPServerRpc(-selectedItem.buffCost);
         currentCP -= selectedItem.buffCost;
-        SetCPText(currentCP);
+        //SetCPText(currentCP);
         SummonTotem();
         DeselectItem();
     }

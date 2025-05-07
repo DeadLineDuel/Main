@@ -56,7 +56,7 @@ namespace Stats.Boss
             if (IsDead) return;
             
             // TODO : Add Def Calculation
-            CurrentHealth.Value = Math.Max(0, CurrentHealth.Value - (damage - Def.Value));
+            CurrentHealth.Value = Math.Max(0, CurrentHealth.Value - (damage));
             if (IsDead)
             {
                 OnDeath?.Invoke();

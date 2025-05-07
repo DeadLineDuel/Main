@@ -20,55 +20,6 @@
       "target": "Player",
       "type": "Cooltime",
       "value": -1
-    },
-    {
-      "name": "Test",
-      "cost": 100,
-      "target": "Player",
-      "type": "Attack",
-      "value": 50
-    },
-    {
-      "name": "Test",
-      "cost": 100,
-      "target": "Player",
-      "type": "Attack",
-      "value": 50
-    },
-    {
-      "name": "Test",
-      "cost": 100,
-      "target": "Player",
-      "type": "Attack",
-      "value": 50
-    },
-    {
-      "name": "Test",
-      "cost": 100,
-      "target": "Player",
-      "type": "Attack",
-      "value": 50
-    },
-    {
-      "name": "Test",
-      "cost": 100,
-      "target": "Player",
-      "type": "Attack",
-      "value": 50
-    },
-    {
-      "name": "Test",
-      "cost": 100,
-      "target": "Player",
-      "type": "Attack",
-      "value": 50
-    },
-    {
-      "name": "Test",
-      "cost": 100,
-      "target": "Player",
-      "type": "Attack",
-      "value": 50
     }
   ],
   "enemyBuffs": [

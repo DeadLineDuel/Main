@@ -12,7 +12,7 @@ public class CharacterStats : MonoBehaviour
     [SerializeField] private float attack = 10f;
     [SerializeField] private float defense = 5f;
     [SerializeField] private float attackSpeed = 1f;
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float moveSpeed = 50f;
     [SerializeField] private float coolTime = 1.0f;
     
     // 이벤트 정의

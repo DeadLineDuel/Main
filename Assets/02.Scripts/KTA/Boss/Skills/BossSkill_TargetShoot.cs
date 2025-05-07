@@ -30,7 +30,7 @@ namespace Boss.Skills
             {
                 yield return new WaitForSeconds(IndicatorTime);
                 targetPos = BossCore.BossCharacter.GetTargetPosition();
-                targetPos.y = 0.1f;
+                targetPos.y -= 0.2f;
                 SyncTargetPosClientRpc(targetPos);
                 
                 ActivateIndicatorClientRpc();
@@ -51,7 +51,7 @@ namespace Boss.Skills
         protected override void ActivateIndicatorClientRpc()
         {
             if (!BossCore.BossCharacter.IsClientBoss) return;
-            Debug.Log(targetPos);
+
             skillIndicator.transform.position = targetPos;
             skillIndicator.Play();
         }

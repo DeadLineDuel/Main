@@ -1,5 +1,7 @@
 ﻿using Boss.Skills;
+using KTA.Test;
 using Stats.Boss;
+using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,7 +16,6 @@ namespace Boss
         
         [field: Header("Boss Settings")] // TODO : Move to Boss Stat
         [field: SerializeField] public float PlayerDetectRange { get; private set; } = 10f;
-        [field: SerializeField] public float MovementSpeed { get; private set; } = 1f;
 
         private BossIdleState IdleState { get; set; }
         private BossWakeState WakeState  { get; set; }
@@ -56,13 +57,15 @@ namespace Boss
             
             if (IsServer)
             {
+                BossCore.NavMeshAgent.speed = BossCore.BossStats.Speed.Value;
                 BossCore.NavMeshAgent.updatePosition = true;
                 BossCore.NavMeshAgent.updateRotation = true;
                     
                 BossCore.BossStats.Speed.OnValueChanged += OnSpeedChanged;
                 BossCore.BossStats.OnDeath += OnDeathMessage;
 
-                GamePlayManager.Instance.OnBossWake += OnWakeMessage;
+                //GamePlayManager.Instance.OnBossWake += OnWakeMessage;
+                TESTGamePlayManager.Instance.OnBossWake += OnWakeMessage;
             }
         }
 
@@ -77,7 +80,8 @@ namespace Boss
                 BossCore.BossStats.OnDeath -= OnDeathMessage;
             }
             
-            GamePlayManager.Instance.OnBossWake -= OnWakeMessage;
+            //GamePlayManager.Instance.OnBossWake -= OnWakeMessage;
+            TESTGamePlayManager.Instance.OnBossWake -= OnWakeMessage;
         }
 
         private void OnSpeedChanged(float prev, float next)
@@ -95,10 +99,19 @@ namespace Boss
         public void OnWakeMessage() // TODO : to private and subscribe
         {
             Debug.Log("Wake" + gameObject.name);
+
+            // BossCore.GetComponent<Collider>().isTrigger = false;
+            // EnableColliderClientRpc();
             if (!IsServer) return;  // Server Code
             Debug.Log("Is Server Wake" + gameObject.name);
             ChangeState((byte) BossState.Wake);
         }
+
+        // [ClientRpc]
+        // private void EnableColliderClientRpc()
+        // {
+        //     BossCore.GetComponent<Collider>().isTrigger = false;
+        // }
         
         // Draw Attack Range
         private void OnDrawGizmosSelected()

@@ -117,8 +117,8 @@ public class PlayerController : NetworkBehaviour
         if (_navAgent != null && _characterStats != null)
         {
             _navAgent.speed = _objectBase.GetMoveSpeed();
-            _navAgent.angularSpeed = _rotationSpeed * 100;
-            _navAgent.acceleration = 8f;
+            _navAgent.angularSpeed = _rotationSpeed * 1000;
+            _navAgent.acceleration = 500f;
         }
 
        
@@ -134,8 +134,8 @@ public class PlayerController : NetworkBehaviour
             if (_navAgent != null && _characterStats != null)
             {
                 _navAgent.speed = _objectBase.GetMoveSpeed();
-                _navAgent.angularSpeed = _rotationSpeed * 100;
-                _navAgent.acceleration = 8f;
+                _navAgent.angularSpeed = _rotationSpeed * 1000;
+                _navAgent.acceleration = 500f;
             }
         }
 
@@ -351,8 +351,6 @@ public class PlayerController : NetworkBehaviour
 
         // 위치 동기화 로직 추가
         UpdatePositionSynchronization();
-
-        
     }
 
 
@@ -369,8 +367,7 @@ public class PlayerController : NetworkBehaviour
 
             Ray ray = _playerCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            
-            if (Physics.Raycast(ray, out hit, 100f, _groundLayer))
+            if (Physics.Raycast(ray, out hit, 1000f, _groundLayer))
             {
                 // 이동 표시자 표시
                 if (_moveIndicator != null)

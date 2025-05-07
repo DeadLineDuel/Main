@@ -20,6 +20,7 @@ namespace Boss.Skills
             if (!IsServer) return;  // On Server
             
             bossPos = BossCore.transform.position;
+            SyncBossPosClientRpc(bossPos);
             StartCoroutine(ExecuteSkillSequence());
         }
 
@@ -37,6 +38,11 @@ namespace Boss.Skills
             ActivateDamageCollider(BossCore.BossStats.Atk.Value);
         }
         
+        [ClientRpc]
+        private void SyncBossPosClientRpc(Vector3 pos)
+        {
+            bossPos = pos;
+        }
         
         [ClientRpc]
         protected override void ActivateIndicatorClientRpc()

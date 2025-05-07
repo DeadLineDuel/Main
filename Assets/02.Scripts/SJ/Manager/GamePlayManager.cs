@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Boss;
 using Stats.Boss;
 using Unity.Netcode;
@@ -75,7 +76,7 @@ public class GamePlayManager : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        
+        Debug.Log("OnNetworkSpawn");
         if (IsServer)
         {
             // 서버 측 게임 상태 초기화 및 콜백 등록
@@ -667,11 +668,11 @@ public class GamePlayManager : NetworkBehaviour
     [ClientRpc]
     private void SyncConnectedPlayerClientRpc(ulong clientId, ulong networkObjectId)
     {
-        NetworkObject bossNetObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
-        if (bossNetObj != null)
-        {
-            connectedPlayersId[clientId] = bossNetObj;
-        }
+        // NetworkObject bossNetObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
+        // if (bossNetObj != null)
+        // {    
+        //     connectedPlayersId[clientId] = bossNetObj;
+        // }
     }
     
     [ClientRpc]
